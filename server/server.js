@@ -18,4 +18,3 @@ app.use("/", HaravanRouter);
 app.listen(port, (req, res) => {
   console.log(`App listening on port ${port}`);
 });
-  
