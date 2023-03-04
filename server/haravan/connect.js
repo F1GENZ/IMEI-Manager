@@ -32,7 +32,7 @@ router.get("/install/login", async (req, res) => {
   const shopExists = await authModels.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
   if (shopExists.length !== 0) {
-    res.status(400).json("Shop installed app");
+    res.redirect("http://localhost:3000/manager/product");
   } else {
     res.redirect(url);
   }
@@ -68,7 +68,7 @@ router.post("/install/grandservice", async (req, res) => {
     await authModels.create(authorizeInfo);
     await subscribe_webhook(authorizeInfo.access_token);
   }
-  res.status(200).json("Install success");
+  res.redirect("http://localhost:3000/manager/product");
 });
 
 function getToken(code, callback_url) {
