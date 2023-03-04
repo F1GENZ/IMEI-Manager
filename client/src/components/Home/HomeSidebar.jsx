@@ -10,7 +10,7 @@ import { Layout, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 const Sider = Layout.Sider;
 
-function HomeSidebar() {
+function HomeSidebar(props) {
   const navigate = useNavigate();
   function getItem(label, key, icon, children) {
     return {
@@ -21,16 +21,21 @@ function HomeSidebar() {
     };
   }
   const items = [
-    getItem("Trình quản lý", "manager", <PieChartOutlined />, [
+    getItem("Trình quản lý", "admin/manager", <PieChartOutlined />, [
       getItem("Dựa trên Product", "product", <InboxOutlined />),
       getItem("Dựa trên IMEI", "imei", <BarcodeOutlined />),
     ]),
-    getItem("Thông báo", "manager/notify", <NotificationOutlined />),
-    getItem("Cài đặt", "manager/setting", <SettingOutlined />),
-    getItem("Hỗ trợ", "manager/support", <CustomerServiceOutlined />),
+    getItem("Thông báo", "admin/notify", <NotificationOutlined />),
+    getItem("Cài đặt", "admin/setting", <SettingOutlined />),
+    getItem("Hỗ trợ", "admin/support", <CustomerServiceOutlined />),
   ];
   return (
-    <Sider trigger={null} className={`home-sidebar`}>
+    <Sider
+      trigger={null}
+      className={props.className}
+      breakpoint="lg"
+      collapsedWidth="50"
+    >
       <h1 className="home-sidebar-logo">
         <img width="32" height="32" src="/logo.png" alt="IMEI Manager" />
         <span>IMEI Manager</span>

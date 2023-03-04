@@ -23,7 +23,7 @@
     "oauth": "^0.10.0"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0",
-    "request": "^2.88.2"
+    "axios": "^1.3.4",
+    "jsonwebtoken": "^9.0.0"
   }
 }

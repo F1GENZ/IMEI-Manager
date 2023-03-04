@@ -1,8 +1,13 @@
 /* eslint-disable react/jsx-pascal-case */
-import { HomeTwoTone } from "@ant-design/icons";
-import { Breadcrumb, Layout } from "antd";
+import { Layout } from "antd";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import HomeBreadCrumb from "./components/Home/HomeBreadCrumb";
 import HomeSidebar from "./components/Home/HomeSidebar";
 import Manager_Imei from "./components/Manager_Imei";
 import Manager_Product from "./components/Manager_Product";
@@ -16,33 +21,21 @@ const App = () => {
   return (
     <Router>
       <Layout className="home">
-        <HomeSidebar />
+        <HomeSidebar className="home-sidebar" />
         <Layout className="site-layout home-layout">
+          <HomeBreadCrumb className="home-layout-breadcrumb" />
           <Content className="home-layout-content">
-            <Breadcrumb
-              style={{
-                margin: "16px 0",
-              }}
-            >
-              <Breadcrumb.Item>
-                <HomeTwoTone />
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>Trình quản lý</Breadcrumb.Item>
-              <Breadcrumb.Item>Dựa trên Product</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="home-layout-content-wrapper">
-              <Routes>
-                <Route exac path="/manager/imei" element={<Manager_Imei />} />
-                <Route
-                  exac
-                  path="/manager/product"
-                  element={<Manager_Product />}
-                />
-                <Route exac path="/manager/setting" element={<Setting />} />
-                <Route exac path="/manager/support" element={<Support />} />
-                <Route exac path="/manager/notify" element={<Notify />} />
-              </Routes>
-            </div>
+            <Routes>
+              <Route
+                path="*"
+                element={<Navigate to="/admin/manager/product" replace={true} />}
+              />
+              <Route path="/admin/manager/product" element={<Manager_Product />} />
+              <Route path="/admin/manager/imei" element={<Manager_Imei />} />
+              <Route path="/admin/notify" element={<Notify />} />
+              <Route path="/admin/setting" element={<Setting />} />
+              <Route path="/admin/support" element={<Support />} />
+            </Routes>
           </Content>
           <Footer className="home-layout-footer">
             IMEI Manager ©2023 Created by F1GENZ TECHNOLOGY

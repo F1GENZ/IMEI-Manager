@@ -1,8 +1,9 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import request from "request";
 import { OAuth2 } from "oauth";
 import authModels from "../models/authModels.js";
+import axios from "axios";
+import productModel from "../models/productModel.js";
 
 const router = express.Router();
 
@@ -17,7 +18,8 @@ const config = {
   app_secret:
     "44a3aa3fdbc9c665e6ce54982a234d92af983ae4ceada403e1279c3ed19cdc8b",
   scope_login: "openid profile email org userinfo",
-  scope: "openid profile email org userinfo grant_service wh_api",
+  scope:
+    "openid profile email org userinfo com.read_products com.write_products grant_service wh_api",
   login_callback_url: "http://localhost:5000/install/login",
   install_callback_url: "http://localhost:5000/install/grandservice",
   orgid: 1000409769,
@@ -25,6 +27,38 @@ const config = {
     hrvVerifyToken: "imei-manager-0932093794",
     subscribe: "https://webhook.haravan.com/api/subscribe",
   },
+};
+
+// Product in Store
+const fetchProduct = async (access_token) => {
+  try {
+    const response = await axios.get(
+      "https://apis.haravan.com/com/products.json?fields=title,variants,handle",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+};
+const saveProduct = async (data) => {
+  data.variants.forEach(async (element) => {
+    const product = {
+      title:
+        data.title +
+        ` - ${element.option1}` +
+        (element.option2 !== null && `/${element.option2}`) +
+        (element.option3 !== null && `/${element.option3}`),
+      handle: data.handle,
+      variantId: element.id,
+    };
+    await productModel.create(product);
+  });
 };
 
 router.get("/install/login", async (req, res) => {
@@ -67,6 +101,12 @@ router.post("/install/grandservice", async (req, res) => {
   if (authorizeInfo) {
     await authModels.create(authorizeInfo);
     await subscribe_webhook(authorizeInfo.access_token);
+    const productData = await fetchProduct(authorizeInfo.access_token);
+    if (productData.products) {
+      productData.products.forEach(async (element) => {
+        await saveProduct(element);
+      });
+    }
   }
   res.redirect("http://localhost:3000/manager/product");
 });
@@ -108,18 +148,17 @@ function getToken(code, callback_url) {
 
 // Webhooks
 const subscribe_webhook = async (access_token) => {
-  let options = {
-    method: "POST",
-    url: config.webhook.subscribe,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${access_token}`,
-    },
-  };
-  request(options, (err, res, body) => {
-    if (err) console.log(err);
+  try {
+    await axios.post(config.webhook.subscribe, null, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
     console.log("Subscribe webhook success");
-  });
+  } catch (error) {
+    console.log(error.response);
+  }
 };
 
 router.get("/embed/webhooks", (req, res) => {
@@ -139,6 +178,7 @@ router.post("/embed/webhooks", async (req, res) => {
       res.sendStatus(200);
       let orgid = req.body.org_id;
       await authModels.findOneAndRemove({ orgid });
+      console.log("Remove store success");
       break;
     }
     default:

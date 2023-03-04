@@ -15,7 +15,7 @@ html {
       align-items: center;
       transition: all 0.35s;
       margin: 5px 0;
-      img{
+      img {
         max-width: 30px;
         height: auto;
       }
@@ -23,20 +23,28 @@ html {
         margin-left: 10px;
         display: block;
         white-space: nowrap;
+        @media (max-width: 1024px) {
+          display: none;
+        }
       }
     }
   }
-  .home-layout{
-    .home-layout-content{
-      margin: 0 15px;
-      .home-layout-content-wrapper{
-        background: #FFF;
-        height: 100%;
-        padding: 15px;
-      }
+  .home-layout {
+    .home-layout-breadcrumb {
+      margin: 15px;
     }
-    .home-layout-footer{
+    .home-layout-content {
+      margin: 0 15px;
+      background: #fff;
+      height: 100%;
+      padding: 15px;
+    }
+    .home-layout-footer {
       text-align: center;
+      @media (max-width: 767px) {
+        padding: 15px;
+        font-size: 0.75rem;
+      }
     }
   }
 }
