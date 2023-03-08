@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema(
   {
-    title: String,
+    title: { type: String, text: true },
     handle: String,
     variantId: Number,
+    variantTitle: String,
     imei: {
       type: String,
       default: "",
@@ -16,5 +17,5 @@ const productSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
+productSchema.index({ title: "text" });
 export default mongoose.model("productModel", productSchema);

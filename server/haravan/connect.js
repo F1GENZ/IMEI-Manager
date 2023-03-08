@@ -48,16 +48,16 @@ const fetchProduct = async (access_token) => {
 };
 const saveProduct = async (data) => {
   data.variants.forEach(async (element) => {
-    const product = {
-      title:
-        data.title +
-        ` - ${element.option1}` +
-        (element.option2 !== null && `/${element.option2}`) +
-        (element.option3 !== null && `/${element.option3}`),
+    const item = {
+      title: data.title,
       handle: data.handle,
       variantId: element.id,
+      variantTitle:
+        element.option1 +
+        (element.option2 ? `/${element.option2}` : "") +
+        (element.option3 ? `/${element.option3}` : ""),
     };
-    await productModel.create(product);
+    await productModel.create(item);
   });
 };
 

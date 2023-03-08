@@ -1,25 +1,48 @@
 import { HomeTwoTone } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function HomeBreadCrumb(props) {
+  const navigate = useNavigate();
   const location = useLocation();
   const pathSnippets = location.pathname.split("/").filter((i) => i);
 
+  const { product } = useSelector((state) => state.product);
+
   const breadcrumbNameMap = {
-    "/admin/manager": "Trình quản lý",
-    "/admin/manager/product": "Dựa trên Product",
-    "/admin/manager/imei": "Dựa trên Imei",
-    "/admin/notify": "Thông báo",
-    "/admin/setting": "Cài đặt",
-    "/admin/support": "Hỗ trợ",
+    manager: "Trình quản lý",
+    notify: "Thông báo",
+    setting: "Cài đặt",
+    support: "Hỗ trợ",
   };
 
-  const extraBreadcrumbItems = pathSnippets.map((_, index) => {
+  const extraBreadcrumbItems = pathSnippets.map((value, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
-    return (
-      <Breadcrumb.Item key={url}>{breadcrumbNameMap[url]}</Breadcrumb.Item>
-    );
+    let breadcrumbData;
+    if (breadcrumbNameMap[value]) {
+      breadcrumbData = (
+        <Breadcrumb.Item key={url} href="#" onClick={(e) => navigate(url)}>
+          {breadcrumbNameMap[value]}
+        </Breadcrumb.Item>
+      );
+    } else {
+      const breadcrumbFilter =
+        product &&
+        product.filter(function (el) {
+          return el._id === value;
+        });
+      if (breadcrumbFilter) {
+        if (breadcrumbFilter[0]) {
+          breadcrumbData = (
+            <Breadcrumb.Item key={url}>
+              {breadcrumbFilter[0].title}
+            </Breadcrumb.Item>
+          );
+        }
+      }
+    }
+    return breadcrumbData;
   });
 
   const breadcrumbItems = [

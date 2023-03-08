@@ -3,15 +3,14 @@ import {
   PieChartOutlined,
   NotificationOutlined,
   CustomerServiceOutlined,
-  InboxOutlined,
-  BarcodeOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const Sider = Layout.Sider;
 
 function HomeSidebar(props) {
   const navigate = useNavigate();
+  const location = useLocation();
   function getItem(label, key, icon, children) {
     return {
       label,
@@ -21,13 +20,10 @@ function HomeSidebar(props) {
     };
   }
   const items = [
-    getItem("Trình quản lý", "admin/manager", <PieChartOutlined />, [
-      getItem("Dựa trên Product", "product", <InboxOutlined />),
-      getItem("Dựa trên IMEI", "imei", <BarcodeOutlined />),
-    ]),
-    getItem("Thông báo", "admin/notify", <NotificationOutlined />),
-    getItem("Cài đặt", "admin/setting", <SettingOutlined />),
-    getItem("Hỗ trợ", "admin/support", <CustomerServiceOutlined />),
+    getItem("Trình quản lý", "/admin/manager", <PieChartOutlined />),
+    getItem("Thông báo", "/admin/notify", <NotificationOutlined />),
+    getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
+    getItem("Hỗ trợ", "/admin/support", <CustomerServiceOutlined />),
   ];
   return (
     <Sider
@@ -41,13 +37,12 @@ function HomeSidebar(props) {
         <span>IMEI Manager</span>
       </h1>
       <Menu
-        onClick={({ keyPath }) => navigate(`/${keyPath.reverse().join("/")}`)}
+        onClick={({ keyPath }) => navigate(`${keyPath.reverse().join("/")}`)}
         inlineIndent="10"
         theme="dark"
         mode="inline"
         items={items}
-        defaultOpenKeys={["manager"]}
-        defaultSelectedKeys={["product"]}
+        defaultSelectedKeys={[location.pathname]}
       ></Menu>
     </Sider>
   );
