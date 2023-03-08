@@ -15,8 +15,15 @@ const getProducts = async (req, res) => {
   res.status(200).json(response);
 };
 
+const getProduct = async (req, res) => {
+  const id = req.params.id;
+  const response = await productModel.find({ _id: id });
+  res.status(200).json(response);
+};
+
 const apiProduct = {
   getProducts,
+  getProduct,
 };
 
 export default apiProduct;

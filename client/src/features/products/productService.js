@@ -9,8 +9,14 @@ const call_allProducts = async (data) => {
   return response.data;
 };
 
+const call_singleProduct = async (data) => {
+  const response = await axios.get(`${API_URL}/all/${data}`);
+  return response.data;
+};
+
 const productServices = {
-  call_allProducts
+  call_allProducts,
+  call_singleProduct
 };
 
 export default productServices;

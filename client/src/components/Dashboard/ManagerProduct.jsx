@@ -1,29 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Typography, Col, Row, Input, Button } from "antd";
 import { ImportOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  get_allProducts,
-  get_searchProduct,
-  reset,
-} from "../../features/products/productSlice";
-import { toast } from "react-toastify";
 const { Text } = Typography;
-function Manager_Product() {
-  const { products, isError, isLoading, message } = useSelector(
-    (state) => state.product
-  );
-  const [dataSearch, setDataSearch] = useState("");
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const getData = setTimeout(() => {
-      if (isError) toast.error(message);
-      dispatch(get_allProducts(dataSearch));
-    }, 750);
-    return () => clearTimeout(getData);
-  }, [dataSearch, dispatch, isError, message]);
-
+function Manager_Product(props) {
   return (
     <div className="dashboard-product">
       <div className="dashboard-product-head">
@@ -35,7 +14,8 @@ function Manager_Product() {
       <Input.Search
         placeholder="Nhập tên sản phẩm cần tìm"
         enterButton
-        onChange={(e) => setDataSearch(e.target.value)}
+        defaultValue={props.dataSearch}
+        onChange={(e) => props.setDataSearch(e.target.value)}
       />
       <div className="dashboard-product-data">
         <Row className="product-item" key="" gutter={30}>
@@ -55,8 +35,8 @@ function Manager_Product() {
             </Text>
           </Col>
         </Row>
-        {products &&
-          products.map((value, _) => (
+        {props.products &&
+          props.products.map((value, _) => (
             <Row
               className="product-item"
               key={value._id}

@@ -1,91 +1,95 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { SaveOutlined, EditOutlined } from "@ant-design/icons";
 import { Row, Col, Typography, Input, Button } from "antd";
 
 const { Text } = Typography;
 
-function ManagerDetail() {
-  const [data, setData] = useState();
+function ManagerDetail(props) {
   const [dataImei, setDataImei] = useState("");
-  const location = useLocation();
-  const currentId = location.pathname.split("/").reverse()[0];
-  const { product } = useSelector((state) => state.product);
-  useEffect(() => {
-    if (product) {
-      const filterData =
-        product &&
-        product.filter((el) => {
-          return el._id === currentId;
-        });
-      setData(filterData[0]);
-    }
-  }, []);
+  const products = props.products;
+  const currentId = window.location.pathname.split("/").reverse()[0];
+  const filterData =
+    products &&
+    products.filter((el) => {
+      return el._id === currentId;
+    });
 
   const onSave = () => {
-    setData({
-      ...data,
-      imei: dataImei
-    });
+    // setData({
+    //   ...data,
+    //   imei: dataImei,
+    // });
   };
 
   return (
     <>
-      {data && (
-        <div className="imei-item">
-          <div className="imei-item-head">
-            <h3>{data.title && data.title}</h3>
-            <span>
-              <strong>Phân loại: </strong>
-              {data.variantTitle && data.variantTitle}
-            </span>
-            <span>
-              <strong>Mã IMEI: </strong>
-              {data.imei ? (
-                data.imei
+      {filterData &&
+        filterData.map((value, key) => (
+          <div className="imei-item" key={key}>
+            <div className="imei-item-head">
+              <h3>{value.title && value.title}</h3>
+              <span>
+                <strong>Phân loại: </strong>
+                {value.variantTitle && value.variantTitle}
+              </span>
+              <span>
+                <strong>Mã IMEI: </strong>
+                {value.imei ? (
+                  value.imei
+                ) : (
+                  <Input
+                    defaultValue={dataImei}
+                    bordered={false}
+                    style={{ width: "250px" }}
+                    placeholder="Nhập mã IMEI cho sản phẩm"
+                    onChange={(e) => setDataImei(e.target.value)}
+                  />
+                )}
+              </span>
+              <span>
+                {value.imei ? (
+                  <Button type="text" onClick={onSave}>
+                    <EditOutlined />
+                    Chỉnh sửa
+                  </Button>
+                ) : (
+                  <Button type="text" onClick={onSave}>
+                    <SaveOutlined /> Lưu
+                  </Button>
+                )}
+              </span>
+            </div>
+            <div className="imei-item-body">
+              <h3>Danh sách bảo hành: </h3>
+              {value.guarantee && value.guarantee.length > 0 ? (
+                <Row key="" gutter={30}>
+                  <Col span={6}>
+                    <Text strong underline>
+                      Số điện thoại
+                    </Text>
+                  </Col>
+                  <Col span={6}>
+                    <Text strong underline>
+                      Thời hạn bảo hành
+                    </Text>
+                  </Col>
+                  <Col span={6}>
+                    <Text strong underline>
+                      Tình trạng bảo hành
+                    </Text>
+                  </Col>
+                  <Col span={6}>
+                    <Text strong underline>
+                      Thao tác
+                    </Text>
+                  </Col>
+                </Row>
               ) : (
-                <Input
-                  defaultValue={dataImei}
-                  bordered={false}
-                  style={{ width: "250px" }}
-                  placeholder="Nhập mã IMEI cho sản phẩm"
-                  onChange={(e) => setDataImei(e.target.value)}
-                />
+                <>Chưa có dữ liệu bảo hành cho sản phẩm này</>
               )}
-            </span>
-            <span>
-              <Button type="text" onClick={onSave}>
-                Lưu
-              </Button>
-            </span>
+            </div>
           </div>
-          <div className="imei-item-body">
-            <h3>Danh sách bảo hành: </h3>
-            <Row key="" gutter={30}>
-              <Col span={6}>
-                <Text strong underline>
-                  Số điện thoại
-                </Text>
-              </Col>
-              <Col span={6}>
-                <Text strong underline>
-                  Thời hạn bảo hành
-                </Text>
-              </Col>
-              <Col span={6}>
-                <Text strong underline>
-                  Tình trạng bảo hành
-                </Text>
-              </Col>
-              <Col span={6}>
-                <Text strong underline>
-                  Thao tác
-                </Text>
-              </Col>
-            </Row>
-          </div>
-        </div>
-      )}
+        ))}
     </>
   );
 }

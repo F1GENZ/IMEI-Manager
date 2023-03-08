@@ -8,7 +8,7 @@ function HomeBreadCrumb(props) {
   const location = useLocation();
   const pathSnippets = location.pathname.split("/").filter((i) => i);
 
-  const { product } = useSelector((state) => state.product);
+  const { products } = useSelector((state) => state.product);
 
   const breadcrumbNameMap = {
     manager: "Trình quản lý",
@@ -28,8 +28,8 @@ function HomeBreadCrumb(props) {
       );
     } else {
       const breadcrumbFilter =
-        product &&
-        product.filter(function (el) {
+        products &&
+        products.filter(function (el) {
           return el._id === value;
         });
       if (breadcrumbFilter) {
