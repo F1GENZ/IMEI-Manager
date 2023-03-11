@@ -5,6 +5,9 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import HomeBreadCrumb from "./components/Home/HomeBreadCrumb";
 import HomeSidebar from "./components/Home/HomeSidebar";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const { Content, Footer } = Layout;
 
 const App = () => {
@@ -22,6 +25,7 @@ const App = () => {
           </Footer>
         </Layout>
       </Layout>
+      <ToastContainer />
     </Router>
   );
 };

@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/", HaravanRouter);
 app.use("/embed/products", routerProduct);
-app.use("/embed/upload", routerFile);
+app.use("/embed/file", routerFile);
 
 app.use(errorHandler);
 app.set("view engine", "ejs");

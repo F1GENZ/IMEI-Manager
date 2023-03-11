@@ -108,5 +108,19 @@ html {
         margin-bottom: 15px;
       }
     }
+    .dashboard-setting-body-export{
+      strong {
+        display: block;
+        margin-bottom: 15px;
+      }
+    }
   }
+}
+
+.qrCode-item{
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
 }

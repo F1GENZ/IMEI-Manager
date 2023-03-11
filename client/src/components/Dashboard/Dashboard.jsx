@@ -10,12 +10,12 @@ import Notify from "./Notify";
 import Setting from "./Setting";
 import Support from "./Support";
 import ManagerDetail from "./ManagerDetail";
-
 function Dashboard() {
   const [dataSearch, setDataSearch] = useState("");
   const { products, isError, message } = useSelector((state) => state.product);
   const dispatch = useDispatch();
   useEffect(() => {
+    
     const getData = setTimeout(() => {
       if (isError) toast.error(message);
       dispatch(get_allProducts(dataSearch));

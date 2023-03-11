@@ -1,19 +1,21 @@
 import fs from "fs";
-import { parse } from "fast-csv";
+import { EOL } from "os";
+import fastCSV from "fast-csv";
 import productModel from "../models/productModel.js";
 import mongoose from "mongoose";
 
-const excelFile = async (req, res) => {
+const importCSV = async (req, res) => {
   const filePath = `uploads/${req.file.filename}`;
   fs.createReadStream(filePath)
-    .pipe(parse({ headers: true }))
+    .pipe(fastCSV.parse({ headers: true }))
     .on("error", (error) => {
       res.status(400);
       throw new Error(error);
     })
     .on("data", async (row) => {
-      row._id = mongoose.Types.ObjectId(row._id);
-      await productModel.updateOne({ _id: row._id }, { $set: row });
+      const objectID = mongoose.Types.ObjectId(row.id);
+      const IMEI = row.imei;
+      await productModel.updateOne({ _id: objectID }, { $set: { imei: IMEI } });
     })
     .on("end", (rowCount) => {
       fs.unlink(filePath, (err) => {
@@ -26,8 +28,52 @@ const excelFile = async (req, res) => {
   res.status(200).json("Update file success");
 };
 
+const exportAll = async (req, res) => {
+  const data = await productModel.find({}, "title variantTitle imei");
+  const csvStream = fastCSV.format({
+    headers: ["id", "title", "variantTitle", "imei"],
+  });
+  csvStream
+    .pipe(res)
+    .on("error", (error) => console.error(error))
+    .on("end", process.exit);
+  for (var key in data) {
+    csvStream.write(data[key]);
+  }
+  csvStream.end();
+};
+
+const exportNoneImei = async (req, res) => {
+  try {
+    const data = await productModel.find(
+      { imei: "" },
+      "title variantTitle imei"
+    );
+    if (!data || data.length === 0) {
+      res.status(404);
+      throw "Tất cả các sản phẩm đã có mã IMEI";
+    }
+
+    const csvStream = fastCSV.format({
+      headers: ["id", "title", "variantTitle", "imei"],
+    });
+    csvStream
+      .pipe(res)
+      .on("error", (error) => console.error(error))
+      .on("end", process.exit);
+    for (var key in data) {
+      csvStream.write(data[key]);
+    }
+    csvStream.end();
+  } catch (error) {
+    return res.json({ message: error });
+  }
+};
+
 const apiFile = {
-  excelFile,
+  importCSV,
+  exportAll,
+  exportNoneImei,
 };
 
 export default apiFile;

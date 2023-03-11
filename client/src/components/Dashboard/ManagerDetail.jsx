@@ -1,10 +1,15 @@
-import React, { useState } from "react";
-import { SaveOutlined, EditOutlined } from "@ant-design/icons";
+import React, { useRef, useState } from "react";
+import { SaveOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
 import { Row, Col, Typography, Input, Button } from "antd";
+
+import ReactToPrint from "react-to-print";
+import ComponentToPrint from "../Print/ComponentToPrint";
 
 const { Text } = Typography;
 
 function ManagerDetail(props) {
+  const componentRef = useRef();
+
   const [dataImei, setDataImei] = useState("");
   const products = props.products;
   const currentId = window.location.pathname.split("/").reverse()[0];
@@ -48,10 +53,24 @@ function ManagerDetail(props) {
               </span>
               <span>
                 {value.imei ? (
-                  <Button type="text" onClick={onSave}>
-                    <EditOutlined />
-                    Chỉnh sửa
-                  </Button>
+                  <>
+                    <Button type="text" onClick={onSave}>
+                      <EditOutlined />
+                      Chỉnh sửa
+                    </Button>
+                    <ReactToPrint
+                      trigger={() => (
+                        <Button type="text" onClick={onSave}>
+                          <PrinterOutlined />
+                          In
+                        </Button>
+                      )}
+                      content={() => componentRef.current}
+                    />
+                    <div style={{ display: "none" }}>
+                      <ComponentToPrint ref={componentRef} text={value.imei} />
+                    </div>
+                  </>
                 ) : (
                   <Button type="text" onClick={onSave}>
                     <SaveOutlined /> Lưu
