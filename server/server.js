@@ -1,6 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import path from "path";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 import express from "express";
 import cors from "cors";
 import HaravanRouter from "./haravan/connect.js";
@@ -22,8 +27,20 @@ app.use("/", HaravanRouter);
 app.use("/embed/products", routerProduct);
 app.use("/embed/file", routerFile);
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, "../", "client", "build", "index.html")
+    )
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("Please set to production");
+  });
+}
+
 app.use(errorHandler);
-app.set("view engine", "ejs");
 app.listen(port, (req, res) => {
   console.log(`App listening on port ${port}`);
 });
