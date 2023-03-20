@@ -12,9 +12,7 @@ function HomeBreadCrumb(props) {
 
   const breadcrumbNameMap = {
     manager: "Trình quản lý",
-    notify: "Thông báo",
     setting: "Cài đặt",
-    support: "Hỗ trợ",
   };
 
   const extraBreadcrumbItems = pathSnippets.map((value, index) => {
@@ -27,17 +25,10 @@ function HomeBreadCrumb(props) {
         </Breadcrumb.Item>
       );
     } else {
-      const breadcrumbFilter =
-        products &&
-        products.filter(function (el) {
-          return el._id === value;
-        });
-      if (breadcrumbFilter) {
-        if (breadcrumbFilter[0]) {
+      if (products) {
+        if (products._id === value) {
           breadcrumbData = (
-            <Breadcrumb.Item key={url}>
-              {breadcrumbFilter[0].title}
-            </Breadcrumb.Item>
+            <Breadcrumb.Item key={url}>{products.productTitle}</Breadcrumb.Item>
           );
         }
       }

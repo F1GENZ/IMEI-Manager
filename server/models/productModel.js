@@ -2,15 +2,14 @@ import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema(
   {
-    title: { type: String, text: true },
-    handle: String,
-    variantId: Number,
+    productTitle: { type: String, text: true },
+    productImage: String,
+    productHandle: String,
+    variantID: Number,
     variantTitle: String,
-    imei: {
-      type: String,
-      default: "",
-    },
-    guarantee: {
+    codeIMEI: { type: String, default: "" },
+    timeGuarantee: Number,
+    userGuarantee: {
       type: Array,
       default: [],
     },

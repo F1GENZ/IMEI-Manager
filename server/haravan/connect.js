@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { OAuth2 } from "oauth";
-import authModels from "../models/authModels.js";
+import authModels from "../models/authModel.js";
 import axios from "axios";
 import productModel from "../models/productModel.js";
 
@@ -33,7 +33,7 @@ const config = {
 const fetchProduct = async (access_token) => {
   try {
     const response = await axios.get(
-      "https://apis.haravan.com/com/products.json?fields=title,variants,handle",
+      "https://apis.haravan.com/com/products.json?fields=title,variants,handle,images",
       {
         headers: {
           "Content-Type": "application/json",
@@ -49,9 +49,10 @@ const fetchProduct = async (access_token) => {
 const saveProduct = async (data) => {
   data.variants.forEach(async (element) => {
     const item = {
-      title: data.title,
-      handle: data.handle,
-      variantId: element.id,
+      productTitle: data.title,
+      productImage: data.images[0].src,
+      productHandle: data.handle,
+      variantID: element.id,
       variantTitle:
         element.option1 +
         (element.option2 ? `/${element.option2}` : "") +

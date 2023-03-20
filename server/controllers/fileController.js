@@ -1,5 +1,4 @@
 import fs from "fs";
-import { EOL } from "os";
 import fastCSV from "fast-csv";
 import productModel from "../models/productModel.js";
 import mongoose from "mongoose";
@@ -13,9 +12,10 @@ const importCSV = async (req, res) => {
       throw new Error(error);
     })
     .on("data", async (row) => {
-      const objectID = mongoose.Types.ObjectId(row.id);
-      const IMEI = row.imei;
-      await productModel.updateOne({ _id: objectID }, { $set: { imei: IMEI } });
+      await productModel.updateOne(
+        { _id: mongoose.Types.ObjectId(row.id) },
+        { $set: { codeIMEI: row.codeIMEI, timeGuarantee: row.timeGuarantee } }
+      );
     })
     .on("end", (rowCount) => {
       fs.unlink(filePath, (err) => {
@@ -29,9 +29,18 @@ const importCSV = async (req, res) => {
 };
 
 const exportAll = async (req, res) => {
-  const data = await productModel.find({}, "title variantTitle imei");
+  const data = await productModel.find(
+    {},
+    "productTitle variantTitle codeIMEI timeGuarantee"
+  );
   const csvStream = fastCSV.format({
-    headers: ["id", "title", "variantTitle", "imei"],
+    headers: [
+      "id",
+      "productTitle",
+      "variantTitle",
+      "codeIMEI",
+      "timeGuarantee",
+    ],
   });
   csvStream
     .pipe(res)
@@ -46,8 +55,8 @@ const exportAll = async (req, res) => {
 const exportNoneImei = async (req, res) => {
   try {
     const data = await productModel.find(
-      { imei: "" },
-      "title variantTitle imei"
+      { codeIMEI: "" },
+      "productTitle variantTitle codeIMEI timeGuarantee"
     );
     if (!data || data.length === 0) {
       res.status(404);
@@ -55,7 +64,13 @@ const exportNoneImei = async (req, res) => {
     }
 
     const csvStream = fastCSV.format({
-      headers: ["id", "title", "variantTitle", "imei"],
+      headers: [
+        "id",
+        "productTitle",
+        "variantTitle",
+        "codeIMEI",
+        "timeGuarantee",
+      ],
     });
     csvStream
       .pipe(res)

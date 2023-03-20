@@ -8,7 +8,6 @@ import connectDB from "./configs/db.js";
 import routerProduct from "./routes/productRoute.js";
 import routerFile from "./routes/fileRoute.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
-import excelUploads from "./configs/multer.js";
 
 const port = process.env.PORT || 8000;
 
@@ -24,7 +23,7 @@ app.use("/embed/products", routerProduct);
 app.use("/embed/file", routerFile);
 
 app.use(errorHandler);
-app.set("view engine", "ejs");
+// app.set("view engine", "ejs");
 app.listen(port, (req, res) => {
   console.log(`App listening on port ${port}`);
 });

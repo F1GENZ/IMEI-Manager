@@ -1,57 +1,75 @@
 import { Link } from "react-router-dom";
-import { Typography, Col, Row, Input, Button } from "antd";
-import { ImportOutlined } from "@ant-design/icons";
+import { Typography, Col, Row, Input, Empty, Space } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { get_allProducts } from "../../features/products/productSlice";
+import { toast } from "react-toastify";
+import Spinner from "../Spinner";
 const { Text } = Typography;
-function Manager_Product(props) {
+
+function Manager_Product() {
+  const [dataSearch, setDataSearch] = useState("");
+  const { products, isLoadingProduct, isErrorProduct, messageProduct } = useSelector(
+    (state) => state.product
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isErrorProduct) toast.error(messageProduct);
+    dispatch(get_allProducts(dataSearch));
+  }, [dataSearch, dispatch, isErrorProduct, messageProduct]);
+
+  const productItems =
+    products && products.length > 0 ? (
+      products.map((value, key) => (
+        <Row className="product-item" key={key} gutter={30}>
+          <Col span={12}>
+            <Link to={value._id}>{value.productTitle || ""}</Link>
+          </Col>
+          <Col span={4}>{value.variantTitle || ""}</Col>
+          <Col span={4}>{value.codeIMEI || "Chưa có dữ liệu"}</Col>
+          <Col span={4}>{value.timeGuarantee || "Chưa có dữ liệu"}</Col>
+        </Row>
+      ))
+    ) : (
+      <Empty description="Chưa có thông tin dữ liệu" />
+    );
+
+  if (isLoadingProduct) {
+    return <Spinner />;
+  }
+
   return (
-    <div className="dashboard-product">
-      <div className="dashboard-product-head">
-        <h2>Danh sách sản phẩm</h2>
-        <Button type="link">
-          <ImportOutlined /> Nhập dữ liệu
-        </Button>
-      </div>
+    <Space size={15} direction="vertical" className="dashboard-product d-flex">
       <Input.Search
+        addonBefore="Danh sách sản phẩm: "
         placeholder="Nhập tên sản phẩm cần tìm"
         enterButton
-        defaultValue={props.dataSearch}
-        onChange={(e) => props.setDataSearch(e.target.value)}
+        defaultValue={dataSearch}
+        onSearch={(value) => setDataSearch(value)}
       />
-      <div className="dashboard-product-data">
-        <Row className="product-item" key="" gutter={30}>
+      <Space
+        direction="vertical"
+        size={15}
+        className="dashboard-product-data d-flex"
+      >
+        <Row className="product-item" gutter={30}>
           <Col span={12}>
-            <Text strong underline>
-              Tên sản phẩm
-            </Text>
+            <Text strong>Tên sản phẩm</Text>
           </Col>
-          <Col span={6}>
-            <Text strong underline>
-              Phân loại
-            </Text>
+          <Col span={4}>
+            <Text strong>Phân loại</Text>
           </Col>
-          <Col span={6}>
-            <Text strong underline>
-              Mã IMEI
-            </Text>
+          <Col span={4}>
+            <Text strong>Mã IMEI</Text>
+          </Col>
+          <Col span={4}>
+            <Text strong>Thời gian bảo hành</Text>
           </Col>
         </Row>
-        {props.products &&
-          props.products.map((value, _) => (
-            <Row
-              className="product-item"
-              key={value._id}
-              gutter={30}
-              data-varid={value.variantId && value.variantId}
-            >
-              <Col span={12}>
-                <Link to={`${value._id}`}>{value.title}</Link>
-              </Col>
-              <Col span={6}>{value.variantTitle && value.variantTitle}</Col>
-              <Col span={6}>{value.imei ? value.imei : "Chưa có dữ liệu"}</Col>
-            </Row>
-          ))}
-      </div>
-    </div>
+        {productItems}
+      </Space>
+    </Space>
   );
 }
 

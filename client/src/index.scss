@@ -9,20 +9,21 @@ html {
   .home-sidebar {
     .home-sidebar-logo {
       padding: 7.5px 10px;
-      color: #fff;
       text-transform: uppercase;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;
       align-items: center;
       transition: all 0.35s;
       margin: 5px 0;
-      img {
+      .ant-image {
         max-width: 30px;
         height: auto;
       }
-      span {
+      strong {
         margin-left: 10px;
         display: block;
         white-space: nowrap;
+        color: #fff;
         @media (max-width: 1024px) {
           display: none;
         }
@@ -50,45 +51,22 @@ html {
 }
 
 .dashboard-product {
-  .dashboard-product-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    h2 {
-      margin: 0;
-      line-height: 1;
+  .dashboard-product-data {
+    .ant-space-item {
+      padding-bottom: 15px;
+      box-shadow: inset 0 -1px 0 rgb(38 50 56 / 10%);
+      &:first-child,
+      &:last-child {
+        box-shadow: none;
+      }
     }
-    button {
-      padding-left: 0;
-      padding-right: 0;
-    }
-  }
-}
-.product-item {
-  margin: 15px;
-  padding-bottom: 15px;
-  box-shadow: inset 0 -1px 0 rgb(38 50 56 / 10%);
-  &:first-child,
-  &:last-child {
-    box-shadow: none;
   }
 }
 
 .imei-item {
   .imei-item-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
     padding-bottom: 15px;
     box-shadow: inset 0 -1px 0 rgb(38 50 56 / 10%);
-    h3 {
-      width: 100%;
-      margin-top: 0;
-    }
-    span {
-      margin-right: 15px;
-    }
   }
 }
 
@@ -108,7 +86,7 @@ html {
         margin-bottom: 15px;
       }
     }
-    .dashboard-setting-body-export{
+    .dashboard-setting-body-export {
       strong {
         display: block;
         margin-bottom: 15px;
@@ -117,10 +95,29 @@ html {
   }
 }
 
-.qrCode-item{
-  padding: 15px;
+.ant-spin {
+  position: absolute;
+  width: calc(100% - 200px);
+  height: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  justify-content: center;
+  top: 0;
+  left: 200px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.ant-typography {
+  margin-top: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.user-item {
+  align-items: center;
 }

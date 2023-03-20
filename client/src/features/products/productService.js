@@ -14,9 +14,15 @@ const call_singleProduct = async (data) => {
   return response.data;
 };
 
+const delete_singleUser = async (data) => {
+  const response = await axios.put(`${API_URL}/all/user/delete?id=${data.id}&phone=${data.phone}`);
+  return response.data;
+};
+
 const productServices = {
   call_allProducts,
-  call_singleProduct
+  call_singleProduct,
+  delete_singleUser,
 };
 
 export default productServices;
