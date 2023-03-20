@@ -36,8 +36,9 @@ const createUser = async (req, res) => {
     }
     const responseUser = await productModel.findOne({
       codeIMEI: imei,
-      userGuarantee: { $elemMatch: { phone: { $gte: phone } } },
+      'userGuarantee.phone': phone,
     });
+    console.log(phone);
     if (!responseUser) {
       var newUser = {
         name,
