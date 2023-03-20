@@ -20,8 +20,8 @@ const config = {
   scope_login: "openid profile email org userinfo",
   scope:
     "openid profile email org userinfo com.read_products com.write_products grant_service wh_api",
-  login_callback_url: "https://imei-manager-zqz6j.ondigitalocean.app/install/login",
-  install_callback_url: "https://imei-manager-zqz6j.ondigitalocean.app/install/grandservice",
+  login_callback_url: `${process.env.MAIN_URL}/install/login`,
+  install_callback_url: `${process.env.MAIN_URL}/install/grandservice`,
   orgid: 1000409769,
   webhook: {
     hrvVerifyToken: "imei-manager-0932093794",
@@ -67,7 +67,7 @@ router.get("/install/login", async (req, res) => {
   const shopExists = await authModels.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
   if (shopExists.length !== 0) {
-    res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/manager/product");
+    res.redirect(`${process.env.MAIN_URL}/manager/product`);
   } else {
     res.redirect(url);
   }
@@ -109,7 +109,7 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/manager/product");
+  res.redirect(`${process.env.MAIN_URL}/manager/product`);
 });
 
 function getToken(code, callback_url) {
