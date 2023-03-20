@@ -8,5 +8,5 @@ var excelStorage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-const excelUploads = multer({ storage: excelStorage });
+const excelUploads = multer({ storage: excelStorage } );
 export default excelUploads;
