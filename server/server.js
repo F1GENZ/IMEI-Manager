@@ -23,7 +23,7 @@ app.use("/embed/products", routerProduct);
 app.use("/embed/file", routerFile);
 
 app.use(errorHandler);
-// app.set("view engine", "ejs");
+app.set("view engine", "ejs");
 app.listen(port, (req, res) => {
   console.log(`App listening on port ${port}`);
 });
