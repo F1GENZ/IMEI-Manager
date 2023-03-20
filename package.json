@@ -5,13 +5,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "start": "node server/server.js",
     "server": "nodemon server/server.js",
     "client": "npm start --prefix client",
     "build": "cd client && npm install && npm run build",
     "dev": "concurrently \"npm run client\" \"npm run server\""
   },
-  "keywords": [],
+  "keywords": [], 
   "author": "",
   "license": "ISC",
   "devDependencies": {
