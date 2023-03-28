@@ -1,6 +1,6 @@
 import fs from "fs";
 import fastCSV from "fast-csv";
-import productModel from "../models/productModel.js";
+import Product from "../models/productModel.js";
 import mongoose from "mongoose";
 
 const importCSV = async (req, res) => {
@@ -12,7 +12,7 @@ const importCSV = async (req, res) => {
       throw new Error(error);
     })
     .on("data", async (row) => {
-      await productModel.updateOne(
+      await Product.updateOne(
         { _id: mongoose.Types.ObjectId(row.id) },
         { $set: { codeIMEI: row.codeIMEI, timeGuarantee: row.timeGuarantee } }
       );
@@ -29,7 +29,7 @@ const importCSV = async (req, res) => {
 };
 
 const exportAll = async (req, res) => {
-  const data = await productModel.find(
+  const data = await Product.find(
     {},
     "productTitle variantTitle codeIMEI timeGuarantee"
   );
@@ -54,7 +54,7 @@ const exportAll = async (req, res) => {
 
 const exportNoneImei = async (req, res) => {
   try {
-    const data = await productModel.find(
+    const data = await Product.find(
       { codeIMEI: "" },
       "productTitle variantTitle codeIMEI timeGuarantee"
     );

@@ -20,8 +20,8 @@ const config = {
   scope_login: "openid profile email org userinfo",
   scope:
     "openid profile email org userinfo com.read_products com.write_products grant_service wh_api",
-  login_callback_url: `${process.env.MAIN_URL}/install/login`,
-  install_callback_url: `${process.env.MAIN_URL}/install/grandservice`,
+  login_callback_url: `https://imei-manager-zqz6j.ondigitalocean.app/install/login`,
+  install_callback_url: `https://imei-manager-zqz6j.ondigitalocean.app/install/grandservice`,
   orgid: 1000409769,
   webhook: {
     hrvVerifyToken: "imei-manager-0932093794",
@@ -33,7 +33,7 @@ const config = {
 const fetchProduct = async (access_token) => {
   try {
     const response = await axios.get(
-      "https://apis.haravan.com/com/products.json?fields=title,variants,handle,images",
+      "https://apis.haravan.com/com/products.json?fields=id,title,vendor,variants,handle,images",
       {
         headers: {
           "Content-Type": "application/json",
@@ -51,8 +51,11 @@ const saveProduct = async (data) => {
     const item = {
       productTitle: data.title,
       productImage: data.images[0].src,
+      productVendor: data.vendor,
       productHandle: data.handle,
       variantID: element.id,
+      codeIMEI: data.id,
+      timeGuarantee: 12,
       variantTitle:
         element.option1 +
         (element.option2 ? `/${element.option2}` : "") +
@@ -67,7 +70,7 @@ router.get("/install/login", async (req, res) => {
   const shopExists = await authModels.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
   if (shopExists.length !== 0) {
-    res.redirect(`${process.env.MAIN_URL}/manager/product`);
+    res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
   } else {
     res.redirect(url);
   }
@@ -109,7 +112,7 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect(`${process.env.MAIN_URL}/manager/product`);
+  res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
 });
 
 function getToken(code, callback_url) {
@@ -180,6 +183,21 @@ router.post("/embed/webhooks", async (req, res) => {
       let orgid = req.body.org_id;
       await authModels.findOneAndRemove({ orgid });
       console.log("Remove store success");
+      break;
+    }
+    case "products/create": {
+      res.sendStatus(200);
+      console.log(req.body);
+      break;
+    }
+    case "products/update": {
+      res.sendStatus(200);
+      console.log(req.body);
+      break;
+    }
+    case "products/deleted": {
+      res.sendStatus(200);
+      console.log(req.body);
       break;
     }
     default:

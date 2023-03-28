@@ -24,6 +24,7 @@ function ModalPrint({ value, isModalOpen, setIsModalOpen }) {
             ref={componentRef}
             codeIMEI={value.codeIMEI}
             variantID={value.variantID}
+            objectID={value._id}
           ></ComponentToPrint>
         </Col>
         <Col span={12}>{/* Data for Agency */}</Col>

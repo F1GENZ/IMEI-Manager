@@ -21,7 +21,10 @@ const App = () => {
             <Dashboard />
           </Content>
           <Footer className="home-layout-footer">
-            IMEI Manager ©2023 Created by F1GENZ TECHNOLOGY
+            IMEI Manager ©2023 Created by{" "}
+            <a href="https://f1genz.com/" target="_blank" rel="noreferrer">
+              F1GENZ TECHNOLOGY
+            </a>
           </Footer>
         </Layout>
       </Layout>

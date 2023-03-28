@@ -11,7 +11,8 @@ function HomeBreadCrumb(props) {
   const { products } = useSelector((state) => state.product);
 
   const breadcrumbNameMap = {
-    manager: "Trình quản lý",
+    products: "Quản lý sản phẩm",
+    users: "Quản lý người dùng",
     setting: "Cài đặt",
   };
 
@@ -25,10 +26,10 @@ function HomeBreadCrumb(props) {
         </Breadcrumb.Item>
       );
     } else {
-      if (products) {
-        if (products._id === value) {
+      if (products && products.response) {
+        if (products.response._id === value) {
           breadcrumbData = (
-            <Breadcrumb.Item key={url}>{products.productTitle}</Breadcrumb.Item>
+            <Breadcrumb.Item key={url}>{products.response.productTitle}</Breadcrumb.Item>
           );
         }
       }

@@ -18,4 +18,4 @@ const authSchema = mongoose.Schema(
   { timestamp: true }
 );
 
-export default mongoose.model("authmodels", authSchema);
+export default mongoose.model("Auths", authSchema);

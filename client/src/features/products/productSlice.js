@@ -43,6 +43,23 @@ export const get_singleProduct = createAsyncThunk(
   }
 );
 
+export const update_singleProduct = createAsyncThunk(
+  "products/update",
+  async (data, thunkAPI) => {
+    try {
+      return await productServices.update_singleProduct(data);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const remove_singleUser = createAsyncThunk(
   "products/remove_user",
   async (data, thunkAPI) => {
@@ -110,6 +127,20 @@ export const productSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(remove_singleUser.rejected, (state, action) => {
+        state.isLoadingProduct = true;
+        state.isErrorProduct = true;
+        state.messageProduct = action.payload;
+        state.products = null;
+      })
+      .addCase(update_singleProduct.pending, (state) => {
+        state.isLoadingProduct = true;
+      })
+      .addCase(update_singleProduct.fulfilled, (state, action) => {
+        state.isLoadingProduct = false;
+        state.isSuccessProduct = true;
+        state.products = action.payload;
+      })
+      .addCase(update_singleProduct.rejected, (state, action) => {
         state.isLoadingProduct = true;
         state.isErrorProduct = true;
         state.messageProduct = action.payload;

@@ -1,15 +1,34 @@
 import mongoose from "mongoose";
-import productModel from "./productModel";
 
 const clientSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      text: true,
+      require: [true, "Please add Name"],
+    },
     phone: {
       type: String,
+      text: true,
       require: [true, "Please add Phone Number"],
     },
-    data: productModel,
+    timeStart: {
+      type: Date,
+      default: Date.now,
+      require: [true, "Please add time Start"],
+    },
+    timeEnd: {
+      type: Date,
+      require: [true, "Please add time End"],
+    },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-export default mongoose.model("clientModel", clientSchema);
+export default mongoose.model("Client", clientSchema);

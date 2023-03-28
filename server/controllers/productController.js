@@ -1,9 +1,11 @@
-import axios from "axios";
-import productModel from "../models/productModel.js";
-import moment from "moment/moment.js";
+import Product from "../models/productModel.js";
+import Client from "../models/clientModel.js";
+import mongoose from "mongoose";
 
 const getProducts = async (req, res) => {
   const filter = req.query.filter;
+  const limit = req.query.limit;
+  const paginate = req.query.paginate;
   let conditional = {};
   if (filter) {
     conditional = {
@@ -12,86 +14,57 @@ const getProducts = async (req, res) => {
       },
     };
   }
-  const response = await productModel.find(conditional);
-  res.status(200).json(response);
+  const response = await Product.find(conditional)
+    .limit(limit)
+    .skip((paginate - 1) * limit);
+  const count = await Product.find(conditional).count();
+  res.status(200).json({ response, totalPages: count, page: paginate });
 };
 
 const getProduct = async (req, res) => {
   const id = req.params.id;
-  const response = await productModel.findOne({ _id: id });
-  res.status(200).json(response);
+  const response = await Product.findOne({ _id: id })
+    .populate("clientGuarantee")
+    .exec();
+  res.status(200).json({ response });
 };
 
-const createUser = async (req, res) => {
-  try {
-    const imei = req.query.imei;
-    const name = req.query.name;
-    const phone = req.query.phone;
-    if (!imei) throw "Missing imei number";
-    if (!name) throw "Missing name";
-    if (!phone) throw "Missing user's phone number";
-    const response = await productModel.findOne({ codeIMEI: imei });
-    if (!response) {
-      throw "Không tìm thấy dữ liệu sản phẩm";
-    }
-    const responseUser = await productModel.findOne({
-      codeIMEI: imei,
-      'userGuarantee.phone': phone,
-    });
-    console.log(phone);
-    if (!responseUser) {
-      var newUser = {
-        name,
-        phone,
-        timeStart: moment().format("DD/MM/YYYY"),
-        timeEnd: moment()
-          .add(response.timeGuarantee, "months")
-          .format("DD/MM/YYYY"),
-      };
-      response.userGuarantee.push(newUser);
-      response.save();
-    }
+const updateProduct = async (req, res) => {
+  const id = req.params.id;
+  const timeGuarantee = req.query.timeGuarantee;
+  const response = await Product.findOne({ _id: id })
+    .populate("clientGuarantee")
+    .exec();
 
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(401).json(error);
-  }
+  response.timeGuarantee = timeGuarantee;
+  response.save();
+  res.status(200).json({ response });
 };
 
 const deleteUser = async (req, res) => {
-  const id = req.query.id;
-  const phone = req.query.phone;
-  if (!id) res.status(401).json("Missing imei's id number");
-  if (!phone) res.status(401).json("Missing user's phone number");
-  const responseUser = await productModel.updateOne(
-    { _id: id },
-    { $pull: { userGuarantee: { phone: phone } } }
-  );
-  const response = await productModel.findOne({ _id: id });
-  if (!response) {
-    throw "Không tìm thấy dữ liệu sản phẩm";
-  }
-  res.status(200).json(response);
-};
+  const id = req.params.id;
+  const clientID = req.query.clientid;
+  if (!id) throw "Missing imei's ID";
+  if (!clientID) throw "Missing user's ID";
+  const response = await Product.findById(id)
+    .populate("clientGuarantee")
+    .exec();
+  if (response) {
+    response.clientGuarantee.pull({ _id: mongoose.Types.ObjectId(clientID) });
+    response.save(async function (err) {
+      if (err) return handleError(err);
 
-const getUser = async (req, res) => {
-  const imei = req.query.imei;
-  const phone = req.query.phone;
-  if (!imei) res.status(401).json("Missing imei number");
-  if (!phone) res.status(401).json("Missing user's phone number");
-  const responseUser = await productModel.findOne({
-    codeIMEI: imei,
-    userGuarantee: { $elemMatch: { phone: { $gte: phone } } },
-  });
-  res.status(200).json(responseUser);
+      await Client.findByIdAndRemove(clientID);
+    });
+  }
+  res.status(200).json({ response });
 };
 
 const apiProduct = {
   getProducts,
   getProduct,
-  createUser,
+  updateProduct,
   deleteUser,
-  getUser,
 };
 
 export default apiProduct;

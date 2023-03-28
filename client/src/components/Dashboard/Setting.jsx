@@ -1,6 +1,6 @@
 import React from "react";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
-import { Form, Input, Button, Upload, Space } from "antd";
+import { Form, Button, Upload, Space } from "antd";
 import fileServices from "../../features/files/fileServices";
 
 function Setting() {

@@ -4,8 +4,9 @@ import { forwardRef } from "react";
 const { Text } = Typography;
 
 const ComponentToPrint = forwardRef((props, ref) => {
-  const buildUrl = `https://lt-ecommerce.myharavan.com/pages/qr-code?imei=${props.codeIMEI}&varid=${props.variantID}`;
-  // https://lt-ecommerce.myharavan.com/pages/qr-code?imei=123&varid=1099843783
+  const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee?objectid=${props.objectID}&imei=${props.codeIMEI}&varid=${props.variantID}`;
+  // https://lt-ecommerce.myharavan.com/pages/guarantee?objectid=641aa96d624b93d0d93fc7ce&imei=1045186807&varid=1099843783
+  console.log(buildUrl);
   return (
     <Row ref={ref}>
       <Col span={10}>

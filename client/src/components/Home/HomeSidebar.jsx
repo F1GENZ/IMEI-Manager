@@ -1,4 +1,4 @@
-import { SettingOutlined, PieChartOutlined } from "@ant-design/icons";
+import { PieChartOutlined, InboxOutlined } from "@ant-design/icons";
 import { Layout, Menu, Image, Typography } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -17,8 +17,9 @@ function HomeSidebar(props) {
     };
   }
   const items = [
-    getItem("Trình quản lý", "/admin/manager", <PieChartOutlined />),
-    getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
+    getItem("Quản lý sản phẩm", "/admin/products", <InboxOutlined />),
+    getItem("Quản lý người dùng", "/admin/users", <PieChartOutlined />),
+    // getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
   ];
   return (
     <Sider
@@ -43,6 +44,7 @@ function HomeSidebar(props) {
         theme="dark"
         mode="inline"
         items={items}
+        defaultOpenKeys={["/admin/products"]}
         defaultSelectedKeys={[location.pathname]}
       ></Menu>
     </Sider>
