@@ -194,7 +194,7 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/create": {
       res.sendStatus(200);
-      console.log(req);
+      console.log(req); 
       break;
     }
     case "products/update": {
@@ -222,11 +222,10 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/deleted": {
       res.sendStatus(200);
-      console.log(req);
+      console.log(req); 
       break;
     }
     default:
-      res.sendStatus(200);
       break;
   }
 });
