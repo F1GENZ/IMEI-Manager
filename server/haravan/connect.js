@@ -206,9 +206,9 @@ router.post("/embed/webhooks", async (req, res) => {
         codeIMEI: req.body.id,
         timeGuarantee: 12,
         variantTitle:
-          req.body.option1 +
-          (req.body.option2 ? `/${req.body.option2}` : "") +
-          (req.body.option3 ? `/${req.body.option3}` : ""),
+          req.body.variants.option1 +
+          (req.body.variants.option2 ? `/${req.body.variants.option2}` : "") +
+          (req.body.variants.option3 ? `/${req.body.variants.option3}` : ""),
       };
       const product = new Product(item);
       product.save();
@@ -226,9 +226,9 @@ router.post("/embed/webhooks", async (req, res) => {
         codeIMEI: req.body.id,
         timeGuarantee: 12,
         variantTitle:
-          req.body.option1 +
-          (req.body.option2 ? `/${req.body.option2}` : "") +
-          (req.body.option3 ? `/${req.body.option3}` : ""),
+          req.body.variants.option1 +
+          (req.body.variants.option2 ? `/${req.body.variants.option2}` : "") +
+          (req.body.variants.option3 ? `/${req.body.variants.option3}` : ""),
       };
       await Product.findOneAndUpdate(
         {
