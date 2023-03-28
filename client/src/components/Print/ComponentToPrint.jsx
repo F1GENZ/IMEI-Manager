@@ -10,7 +10,7 @@ const ComponentToPrint = forwardRef((props, ref) => {
   return (
     <Row ref={ref}>
       <Col span={10}>
-        <QRCode bordered={false} size={100} value={buildUrl} errorLevel="H" />
+        <QRCode bordered={false} size={100} value={buildUrl} errorLevel="L" />
       </Col>
       <Col span={12}>
         <Space direction="vertical" size={5} style={{ paddingTop: "12px" }}>

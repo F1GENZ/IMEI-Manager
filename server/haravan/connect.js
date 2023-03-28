@@ -119,9 +119,7 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect(
-    "https://imei-manager-zqz6j.ondigitalocean.app/admin/products"
-  );
+  res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
 });
 
 function getToken(code, callback_url) {
@@ -196,46 +194,50 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/create": {
       res.sendStatus(200);
-      const item = {
-        productTitle: req.body.title,
-        productImage:
-          req.body.images.length > 0 ? req.body.images[0].src : null,
-        productVendor: req.body.vendor,
-        productHandle: req.body.handle,
-        variantID: req.body.id,
-        codeIMEI: req.body.id,
-        timeGuarantee: 12,
-        variantTitle:
-          req.body.variants.option1 +
-          (req.body.variants.option2 ? `/${req.body.variants.option2}` : "") +
-          (req.body.variants.option3 ? `/${req.body.variants.option3}` : ""),
-      };
-      const product = new Product(item);
-      product.save();
+      req.body.variants.forEach(async (element) => {
+        const item = {
+          productTitle: req.body.title,
+          productImage:
+            req.body.images.length > 0 ? req.body.images[0].src : null,
+          productVendor: req.body.vendor,
+          productHandle: req.body.handle,
+          variantID: element.id,
+          codeIMEI: req.body.id,
+          timeGuarantee: 12,
+          variantTitle:
+            element.option1 +
+            (element.option2 ? `/${element.option2}` : "") +
+            (element.option3 ? `/${element.option3}` : ""),
+        };
+        const product = new Product(item);
+        product.save();
+      });
       break;
     }
     case "products/update": {
       res.sendStatus(200);
-      const item = {
-        productTitle: req.body.title,
-        productImage:
-          req.body.images.length > 0 ? req.body.images[0].src : null,
-        productVendor: req.body.vendor,
-        productHandle: req.body.handle,
-        variantID: req.body.id,
-        codeIMEI: req.body.id,
-        timeGuarantee: 12,
-        variantTitle:
-          req.body.variants.option1 +
-          (req.body.variants.option2 ? `/${req.body.variants.option2}` : "") +
-          (req.body.variants.option3 ? `/${req.body.variants.option3}` : ""),
-      };
-      await Product.findOneAndUpdate(
-        {
+      req.body.variants.forEach(async (element) => {
+        const item = {
+          productTitle: req.body.title,
+          productImage:
+            req.body.images.length > 0 ? req.body.images[0].src : null,
+          productVendor: req.body.vendor,
+          productHandle: req.body.handle,
+          variantID: element.id,
           codeIMEI: req.body.id,
-        },
-        item
-      );
+          timeGuarantee: 12,
+          variantTitle:
+            element.option1 +
+            (element.option2 ? `/${element.option2}` : "") +
+            (element.option3 ? `/${element.option3}` : ""),
+        };
+        await Product.findOneAndUpdate(
+          {
+            codeIMEI: req.body.id,
+          },
+          item
+        );
+      });
       break;
     }
     case "products/deleted": {
