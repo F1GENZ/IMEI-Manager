@@ -50,7 +50,7 @@ const saveProduct = async (data) => {
   data.variants.forEach(async (element) => {
     const item = {
       productTitle: data.title,
-      productImage: data.images[0].src,
+      productImage: data.images.length > 0 ? data.images[0].src : null,
       productVendor: data.vendor,
       productHandle: data.handle,
       variantID: element.id,
@@ -62,10 +62,7 @@ const saveProduct = async (data) => {
         (element.option3 ? `/${element.option3}` : ""),
     };
     const productExists = await Product.find({ codeIMEI: data.id });
-    console.log(item);
-    console.log("||");
-    console.log(productExists);
-    if (productExists) {
+    if (productExists && productExists.length > 0) {
       await Product.updateOne(item);
     } else {
       await Product.create(item);
@@ -122,7 +119,9 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
+  res.redirect(
+    "https://imei-manager-zqz6j.ondigitalocean.app/admin/products"
+  );
 });
 
 function getToken(code, callback_url) {
@@ -197,14 +196,10 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/create": {
       res.sendStatus(200);
-      console.log(req);
-      break;
-    }
-    case "products/update": {
-      res.sendStatus(200);
       const item = {
         productTitle: req.body.title,
-        productImage: req.body.images[0].src,
+        productImage:
+          req.body.images.length > 0 ? req.body.images[0].src : null,
         productVendor: req.body.vendor,
         productHandle: req.body.handle,
         variantID: req.body.id,
@@ -215,9 +210,29 @@ router.post("/embed/webhooks", async (req, res) => {
           (req.body.option2 ? `/${req.body.option2}` : "") +
           (req.body.option3 ? `/${req.body.option3}` : ""),
       };
-      const product = await Product.findOneAndUpdate(
+      const product = new Product(item);
+      product.save();
+      break;
+    }
+    case "products/update": {
+      res.sendStatus(200);
+      const item = {
+        productTitle: req.body.title,
+        productImage:
+          req.body.images.length > 0 ? req.body.images[0].src : null,
+        productVendor: req.body.vendor,
+        productHandle: req.body.handle,
+        variantID: req.body.id,
+        codeIMEI: req.body.id,
+        timeGuarantee: 12,
+        variantTitle:
+          req.body.option1 +
+          (req.body.option2 ? `/${req.body.option2}` : "") +
+          (req.body.option3 ? `/${req.body.option3}` : ""),
+      };
+      await Product.findOneAndUpdate(
         {
-          codeIMEI: data.id,
+          codeIMEI: req.body.id,
         },
         item
       );
@@ -225,7 +240,7 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/deleted": {
       res.sendStatus(200);
-      console.log(req);
+      await Product.findOneAndRemove({ codeIMEI: req.body.id });
       break;
     }
     default:
