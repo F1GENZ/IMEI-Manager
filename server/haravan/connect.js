@@ -1,9 +1,9 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { OAuth2 } from "oauth";
-import authModels from "../models/authModel.js";
+import Auth from "../models/authModel.js";
 import axios from "axios";
-import productModel from "../models/productModel.js";
+import Product from "../models/productModel.js";
 
 const router = express.Router();
 
@@ -61,16 +61,23 @@ const saveProduct = async (data) => {
         (element.option2 ? `/${element.option2}` : "") +
         (element.option3 ? `/${element.option3}` : ""),
     };
-    await productModel.create(item);
+    const productExists = await Product.find({ codeIMEI: data.id });
+    if (productExists) {
+      await Product.updateOne(item);
+    } else {
+      await Product.create(item);
+    }
   });
 };
 
 router.get("/install/login", async (req, res) => {
   const origid = config.orgid;
-  const shopExists = await authModels.find({ origid });
+  const shopExists = await Auth.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
   if (shopExists.length !== 0) {
-    res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
+    res.redirect(
+      "https://imei-manager-zqz6j.ondigitalocean.app/admin/products"
+    );
   } else {
     res.redirect(url);
   }
@@ -103,7 +110,7 @@ router.post("/install/grandservice", async (req, res) => {
     orgid: config.orgid,
   };
   if (authorizeInfo) {
-    await authModels.create(authorizeInfo);
+    await Auth.create(authorizeInfo);
     await subscribe_webhook(authorizeInfo.access_token);
     const productData = await fetchProduct(authorizeInfo.access_token);
     if (productData.products) {
@@ -181,23 +188,41 @@ router.post("/embed/webhooks", async (req, res) => {
     case "app/uninstalled": {
       res.sendStatus(200);
       let orgid = req.body.org_id;
-      await authModels.findOneAndRemove({ orgid });
+      await Auth.findOneAndRemove({ orgid });
       console.log("Remove store success");
       break;
     }
     case "products/create": {
       res.sendStatus(200);
-      console.log(req.body);
+      console.log(req);
       break;
     }
     case "products/update": {
       res.sendStatus(200);
-      console.log(req.body);
+      const item = {
+        productTitle: req.body.title,
+        productImage: req.body.images[0].src,
+        productVendor: req.body.vendor,
+        productHandle: req.body.handle,
+        variantID: req.body.id,
+        codeIMEI: req.body.id,
+        timeGuarantee: 12,
+        variantTitle:
+          req.body.option1 +
+          (req.body.option2 ? `/${req.body.option2}` : "") +
+          (req.body.option3 ? `/${req.body.option3}` : ""),
+      };
+      const product = await Product.findOneAndUpdate(
+        {
+          codeIMEI: data.id,
+        },
+        item
+      );
       break;
     }
     case "products/deleted": {
       res.sendStatus(200);
-      console.log(req.body);
+      console.log(req);
       break;
     }
     default:
