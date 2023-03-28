@@ -62,6 +62,9 @@ const saveProduct = async (data) => {
         (element.option3 ? `/${element.option3}` : ""),
     };
     const productExists = await Product.find({ codeIMEI: data.id });
+    console.log(item);
+    console.log("||");
+    console.log(productExists);
     if (productExists) {
       await Product.updateOne(item);
     } else {
@@ -194,7 +197,7 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/create": {
       res.sendStatus(200);
-      console.log(req); 
+      console.log(req);
       break;
     }
     case "products/update": {
@@ -222,7 +225,7 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/deleted": {
       res.sendStatus(200);
-      console.log(req); 
+      console.log(req);
       break;
     }
     default:
