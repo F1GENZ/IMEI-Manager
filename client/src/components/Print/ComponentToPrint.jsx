@@ -5,14 +5,13 @@ const { Text } = Typography;
 
 const ComponentToPrint = forwardRef((props, ref) => {
   const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee?objectid=${props.objectID}&imei=${props.codeIMEI}&varid=${props.variantID}`;
-  // https://lt-ecommerce.myharavan.com/pages/guarantee?objectid=641aa96d624b93d0d93fc7ce&imei=1045186807&varid=1099843783
   console.log(buildUrl);
   return (
-    <Row ref={ref}>
-      <Col span={10}>
-        <QRCode bordered={false} size={100} value={buildUrl} errorLevel="L" />
+    <Row ref={ref} gutter={15}>
+      <Col lg={6} md={7} sm={8} xs={9}>
+        <QRCode bordered={false} size={120} value={buildUrl} errorLevel="L" />
       </Col>
-      <Col span={12}>
+      <Col lg={18} md={17} sm={16} xs={15}>
         <Space direction="vertical" size={5} style={{ paddingTop: "12px" }}>
           <Text strong>{props.codeIMEI}</Text>
           <Text strong>{props.variantID}</Text>

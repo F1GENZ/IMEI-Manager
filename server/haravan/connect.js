@@ -75,9 +75,7 @@ router.get("/install/login", async (req, res) => {
   const shopExists = await Auth.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
   if (shopExists.length !== 0) {
-    res.redirect(
-      "https://imei-manager-zqz6j.ondigitalocean.app/admin/products"
-    );
+    res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/admin/products`);
   } else {
     res.redirect(url);
   }
@@ -119,7 +117,7 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect("https://imei-manager-zqz6j.ondigitalocean.app/admin/products");
+  res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${authorizeInfo.access_token}`);
 });
 
 function getToken(code, callback_url) {

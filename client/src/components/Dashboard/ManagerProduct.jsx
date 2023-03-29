@@ -30,13 +30,33 @@ function Manager_Product() {
     products && products.response.length > 0 ? (
       products.response.map((value, key) => (
         <Row className="product-item" key={key} gutter={30}>
-          <Col span={12}>
+          <Col lg={12} md={24} sm={24} xs={24}>
             <Link to={value._id}>{value.productTitle || ""}</Link>
           </Col>
-          <Col span={3}>{value.variantTitle || ""}</Col>
-          <Col span={3}>{value.productVendor || ""}</Col>
-          <Col span={3}>{value.codeIMEI || "Chưa có dữ liệu"}</Col>
-          <Col span={3}>{value.timeGuarantee || "Chưa có dữ liệu"}</Col>
+          <Col lg={3} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Phân loại:
+            </Text>
+            {value.variantTitle || ""}
+          </Col>
+          <Col lg={3} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Thương hiệu:
+            </Text>
+            {value.productVendor || ""}
+          </Col>
+          <Col lg={3} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Mã IMEI:
+            </Text>
+            {value.codeIMEI || "Chưa có dữ liệu"}
+          </Col>
+          <Col lg={3} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Thời gian bảo hành:
+            </Text>
+            {value.timeGuarantee || "Chưa có dữ liệu"}
+          </Col>
         </Row>
       ))
     ) : (
@@ -50,7 +70,7 @@ function Manager_Product() {
   return (
     <Space size={15} direction="vertical" className="dashboard-product d-flex">
       <Input.Search
-        addonBefore="Danh sách sản phẩm: "
+        addonBefore="Sản phẩm: "
         placeholder="Nhập tên sản phẩm cần tìm..."
         enterButton
         defaultValue={dataSearch}
@@ -62,19 +82,19 @@ function Manager_Product() {
         className="dashboard-product-data d-flex"
       >
         <Row className="product-item" gutter={30}>
-          <Col span={12}>
+          <Col lg={12} sm={0} md={0} xs={0}>
             <Text strong>Tên sản phẩm</Text>
           </Col>
-          <Col span={3}>
+          <Col lg={3} sm={0} md={0} xs={0}>
             <Text strong>Phân loại</Text>
           </Col>
-          <Col span={3}>
+          <Col lg={3} sm={0} md={0} xs={0}>
             <Text strong>Thương hiệu</Text>
           </Col>
-          <Col span={3}>
+          <Col lg={3} sm={0} md={0} xs={0}>
             <Text strong>Mã IMEI</Text>
           </Col>
-          <Col span={3}>
+          <Col lg={3} sm={0} md={0} xs={0}>
             <Text strong>Thời gian bảo hành</Text>
           </Col>
         </Row>

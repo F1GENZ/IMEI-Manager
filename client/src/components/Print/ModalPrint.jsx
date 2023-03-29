@@ -19,7 +19,7 @@ function ModalPrint({ value, isModalOpen, setIsModalOpen }) {
       footer={null}
     >
       <Row>
-        <Col span={12} style={myShadow}>
+        <Col lg={24} md={24} sm={24} xs={24} style={myShadow}>
           <ComponentToPrint
             ref={componentRef}
             codeIMEI={value.codeIMEI}
@@ -27,7 +27,7 @@ function ModalPrint({ value, isModalOpen, setIsModalOpen }) {
             objectID={value._id}
           ></ComponentToPrint>
         </Col>
-        <Col span={12}>{/* Data for Agency */}</Col>
+        {/* <Col lg={12}></Col> */}
       </Row>
       <Space align="end" style={{ display: "flex", justifyContent: "end" }}>
         <ReactToPrint

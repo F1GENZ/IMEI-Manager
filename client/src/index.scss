@@ -125,3 +125,13 @@ html {
 .ant-pagination {
   text-align: center;
 }
+
+.visible-md{
+  display: none;
+  @media(max-width: 991px){ display: inline-block; margin-right: 5px; }
+}
+
+.hidden-md{
+  display: inline-block;
+  @media(max-width: 991px){ display: none; }
+}

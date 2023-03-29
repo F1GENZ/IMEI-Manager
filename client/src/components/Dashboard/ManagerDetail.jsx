@@ -52,30 +52,30 @@ function ManagerDetail() {
   };
   const dataProduct = products && products.response && (
     <Row className="imei-item-head" gutter={15}>
-      <Col span={2}>
+      <Col lg={2} md={24} sm={24} xs={24}>
         <Image
           src={products.response.productImage}
           alt={products.response.productTitle || ""}
         />
       </Col>
-      <Col span={22}>
+      <Col lg={22} md={24} sm={24} xs={24}>
         <Title level={4}>{products.response.productTitle || ""}</Title>
-        <Space size={30}>
-          <Text>
+        <Row gutter={30} align="middle">
+          <Col>
             <Text strong>Phân loại: </Text>
             {products.response.variantTitle || "Chưa có dữ liệu"}
-          </Text>
-          <Text>
+          </Col>
+          <Col>
             <Text strong>Thương hiệu: </Text>
             {products.response.productVendor || "Chưa có dữ liệu"}
-          </Text>
-          <Text>
+          </Col>
+          <Col>
             <Text strong>Mã IMEI: </Text>
             {products.response.codeIMEI || "Chưa có dữ liệu"}
-          </Text>
-          <Text>
+          </Col>
+          <Col>
             <Space>
-              <Text strong>Thời gian bảo hành: </Text>
+              <Text strong>Bảo hành: </Text>
               <Form
                 onFinish={updateProducts}
                 initialValues={{
@@ -113,7 +113,7 @@ function ManagerDetail() {
                 </Space>
               </Form>
             </Space>
-          </Text>
+          </Col>
           <Space size={15}>
             {products.response.codeIMEI !== "" && (
               <>
@@ -129,7 +129,7 @@ function ManagerDetail() {
               </>
             )}
           </Space>
-        </Space>
+        </Row>
       </Col>
     </Row>
   );
@@ -141,21 +141,37 @@ function ManagerDetail() {
     products.response.clientGuarantee.length > 0 &&
     products.response.clientGuarantee.map((value, key) => (
       <Row className="user-item" key={key}>
-        <Col span={6}>
-          <Text>{value.name}</Text>
+        <Col lg={6} md={24} sm={24} xs={24}>
+          <Text strong className="visible-md">
+            Họ và tên:
+          </Text>
+          {value.name}
         </Col>
-        <Col span={6}>
-          <Text>{value.phone}</Text>
+        <Col lg={6} md={24} sm={24} xs={24}>
+          <Text strong className="visible-md">
+            Số điện thoại:
+          </Text>
+          {value.phone}
         </Col>
-        <Col span={5}>
-          <Text>{moment(value.timeStart).format("DD/MM/YYYY")}</Text>
+        <Col lg={5} md={24} sm={24} xs={24}>
+          <Text strong className="visible-md">
+            Ngày kích hoạt:
+          </Text>
+          {moment(value.timeStart).format("DD/MM/YYYY")}
         </Col>
-        <Col span={5}>
-          <Text>{moment(value.timeEnd).format("DD/MM/YYYY")}</Text>
+        <Col lg={5} md={24} sm={24} xs={24}>
+          <Text strong className="visible-md">
+            Ngày kết thúc:
+          </Text>
+          {moment(value.timeEnd).format("DD/MM/YYYY")}
         </Col>
-        <Col span={2}>
+        <Col lg={2} md={24} sm={24} xs={24}>
+          <Text strong className="visible-md">
+            Thao tác:
+          </Text>
           <Button
-            type="danger"
+            danger
+            type="text"
             icon={<CloseOutlined />}
             onClick={(e) => deleteUser(products.response._id, value._id)}
           >
@@ -173,27 +189,27 @@ function ManagerDetail() {
     <Space className="imei-item d-flex" size={15} direction="vertical">
       {dataProduct}
       <Row>
-        <Col span={6}>
+        <Col lg={6} md={0} sm={0} xs={0}>
           <Text strong underline>
             Họ và tên
           </Text>
         </Col>
-        <Col span={6}>
+        <Col lg={6} md={0} sm={0} xs={0}>
           <Text strong underline>
             Số điện thoại
           </Text>
         </Col>
-        <Col span={5}>
+        <Col lg={5} md={0} sm={0} xs={0}>
           <Text strong underline>
             Thời gian kích hoạt bảo hành
           </Text>
         </Col>
-        <Col span={5}>
+        <Col lg={5} md={0} sm={0} xs={0}>
           <Text strong underline>
             Thời gian hết hạn bảo hành
           </Text>
         </Col>
-        <Col span={2}>
+        <Col lg={2} md={0} sm={0} xs={0}>
           <Text strong underline>
             Thao tác
           </Text>

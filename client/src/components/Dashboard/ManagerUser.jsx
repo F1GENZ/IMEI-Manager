@@ -43,18 +43,40 @@ function Manager_User() {
         paginate,
       })
     );
-  }, [dataSearch, dateTime, dispatch, isErrorClient, messageClient, limit, paginate]);
+  }, [
+    dataSearch,
+    dateTime,
+    dispatch,
+    isErrorClient,
+    messageClient,
+    limit,
+    paginate,
+  ]);
 
   const clientItems =
     clients && clients.response && clients.response.length > 0 ? (
       clients.response.map((value, key) => (
         <Row className="product-item" key={key} gutter={30}>
-          <Col span={6}>{value.name || ""}</Col>
-          <Col span={6}>{value.phone || ""}</Col>
-          <Col span={12}>
+          <Col lg={6} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Họ và tên:
+            </Text>
+            {value.name || ""}
+          </Col>
+          <Col lg={6} md={24} sm={24} xs={24}>
+            <Text strong className="visible-md">
+              Số điện thoại:
+            </Text>
+            {value.phone || ""}
+          </Col>
+          <Col lg={12} md={24} sm={24} xs={24}>
             {value.products.map((product, index) => (
               <div
-                style={{ display: "flex", alignItems: "center" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
                 key={index}
               >
                 <Text strong>
@@ -87,17 +109,17 @@ function Manager_User() {
 
   return (
     <Space size={15} direction="vertical" className="dashboard-product d-flex">
-      <Row gutter={15}>
-        <Col span={18}>
+      <Row gutter={[15, 15]}>
+        <Col lg={18} md={24} sm={24} xs={24}>
           <Input.Search
-            addonBefore="Danh sách người dùng: "
+            addonBefore="Khách hàng: "
             placeholder="Nhập tên người dùng..."
             enterButton
             defaultValue={dataSearch}
             onSearch={(value) => setDataSearch(value)}
           />
         </Col>
-        <Col span={6}>
+        <Col lg={6} md={24} sm={24} xs={24}>
           <RangePicker
             inputReadOnly
             onChange={(dates, dateStrings) => handlePicker(dates, dateStrings)}
@@ -113,13 +135,13 @@ function Manager_User() {
           className="dashboard-product-data d-flex"
         >
           <Row className="product-item" gutter={30}>
-            <Col span={6}>
+            <Col lg={6} md={0} sm={0} xs={0}>
               <Text strong>Tên người dùng</Text>
             </Col>
-            <Col span={6}>
+            <Col lg={6} md={0} sm={0} xs={0}>
               <Text strong>Số điện thoại</Text>
             </Col>
-            <Col span={12}>
+            <Col lg={12} md={0} sm={0} xs={0}>
               <Text strong>Sản phẩm đã mua</Text>
             </Col>
           </Row>
