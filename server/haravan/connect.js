@@ -117,7 +117,7 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${authorizeInfo.access_token}`);
+  res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/admin/products`);
 });
 
 function getToken(code, callback_url) {

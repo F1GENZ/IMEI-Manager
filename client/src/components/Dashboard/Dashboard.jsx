@@ -13,7 +13,7 @@ function Dashboard() {
         path="*"
         element={<Navigate to="/admin/products" replace={true} />}
       />
-      <Route path="authentication" element={<Authentication />} />
+      {/* <Route path="authentication" element={<Authentication />} /> */}
       <Route path="admin/products" element={<ManagerProduct />} />
       <Route path="admin/products/:id" element={<ManagerDetail />} />
       <Route path="admin/users" element={<ManagerUser />} />
