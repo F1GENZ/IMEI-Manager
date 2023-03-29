@@ -85,7 +85,7 @@ function Manager_User() {
                 </Text>
                 <Button
                   style={{ marginLeft: "auto" }}
-                  type="text"
+                  type="primary"
                   onClick={(e) => navigate(`/admin/products/${product._id}`)}
                 >
                   Xem chi tiết

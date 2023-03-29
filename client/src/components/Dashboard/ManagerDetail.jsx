@@ -171,7 +171,6 @@ function ManagerDetail() {
           </Text>
           <Button
             danger
-            type="text"
             icon={<CloseOutlined />}
             onClick={(e) => deleteUser(products.response._id, value._id)}
           >
