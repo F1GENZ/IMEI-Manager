@@ -1,5 +1,4 @@
 import {
-  SettingOutlined,
   PieChartOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
