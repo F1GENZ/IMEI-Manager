@@ -1,4 +1,8 @@
-import { PieChartOutlined, InboxOutlined } from "@ant-design/icons";
+import {
+  SettingOutlined,
+  PieChartOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import { Layout, Menu, Image, Typography } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 

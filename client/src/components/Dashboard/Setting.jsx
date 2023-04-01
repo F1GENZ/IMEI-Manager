@@ -7,9 +7,6 @@ function Setting() {
   const exportWithFull = (e) => {
     fileServices.exportAll();
   };
-  const exportWithoutImei = (e) => {
-    fileServices.exportNoneImei();
-  };
   return (
     <div className="dashboard-setting">
       <div className="dashboard-setting-head">
@@ -38,16 +35,6 @@ function Setting() {
                 <Form.Item label="Tất cả dữ liệu">
                   <Button
                     onClick={(e) => exportWithFull(e)}
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                  >
-                    Download
-                  </Button>
-                </Form.Item>
-
-                <Form.Item label="Chỉ dữ liệu không có IMEI">
-                  <Button
-                    onClick={(e) => exportWithoutImei(e)}
                     type="primary"
                     icon={<DownloadOutlined />}
                   >

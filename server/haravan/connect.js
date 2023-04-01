@@ -1,5 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import { hash } from "bcrypt";
 import { OAuth2 } from "oauth";
 import Auth from "../models/authModel.js";
 import axios from "axios";
@@ -71,25 +72,27 @@ const saveProduct = async (data) => {
 };
 
 router.get("/install/login", async (req, res) => {
-  const origid = config.orgid;
-  const shopExists = await Auth.find({ origid });
   const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope_login}&client_id=${config.app_id}&redirect_uri=${config.login_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
-  if (shopExists.length !== 0) {
-    res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/admin/products`);
-  } else {
-    res.redirect(url);
-  }
+  res.redirect(url);
 });
 
-router.post("/install/login", (req, res) => {
+router.post("/install/login", async (req, res) => {
   let code = req.body.code;
   if (!code) {
     return res.status(401).json("Code not found");
   }
   const decodeToken = jwt.decode(req.body.id_token);
   if (decodeToken.role[0] == "admin") {
-    const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope}&client_id=${config.app_id}&redirect_uri=${config.install_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
-    res.redirect(url);
+    const origid = config.orgid;
+    const shopExists = await Auth.find({ origid });
+    if (shopExists.length !== 0) {
+      res.redirect(
+        `https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${shopExists[0].access_token}`
+      );
+    } else {
+      const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope}&client_id=${config.app_id}&redirect_uri=${config.install_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
+      res.redirect(url);
+    }
   } else {
     res.status(401).send("Not authorized");
   }
@@ -117,7 +120,9 @@ router.post("/install/grandservice", async (req, res) => {
       });
     }
   }
-  res.redirect(`https://imei-manager-zqz6j.ondigitalocean.app/admin/products`);
+  res.redirect(
+    `https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${authorizeInfo.access_token}`
+  );
 });
 
 function getToken(code, callback_url) {

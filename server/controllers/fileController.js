@@ -14,7 +14,7 @@ const importCSV = async (req, res) => {
     .on("data", async (row) => {
       await Product.updateOne(
         { _id: mongoose.Types.ObjectId(row.id) },
-        { $set: { codeIMEI: row.codeIMEI, timeGuarantee: row.timeGuarantee } }
+        { $set: { timeGuarantee: row.timeGuarantee } }
       );
     })
     .on("end", (rowCount) => {
@@ -52,43 +52,9 @@ const exportAll = async (req, res) => {
   csvStream.end();
 };
 
-const exportNoneImei = async (req, res) => {
-  try {
-    const data = await Product.find(
-      { codeIMEI: "" },
-      "productTitle variantTitle codeIMEI timeGuarantee"
-    );
-    if (!data || data.length === 0) {
-      res.status(404);
-      throw "Tất cả các sản phẩm đã có mã IMEI";
-    }
-
-    const csvStream = fastCSV.format({
-      headers: [
-        "id",
-        "productTitle",
-        "variantTitle",
-        "codeIMEI",
-        "timeGuarantee",
-      ],
-    });
-    csvStream
-      .pipe(res)
-      .on("error", (error) => console.error(error))
-      .on("end", process.exit);
-    for (var key in data) {
-      csvStream.write(data[key]);
-    }
-    csvStream.end();
-  } catch (error) {
-    return res.json({ message: error });
-  }
-};
-
 const apiFile = {
   importCSV,
   exportAll,
-  exportNoneImei,
 };
 
 export default apiFile;
