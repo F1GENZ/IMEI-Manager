@@ -39,7 +39,9 @@ function ManagerDetail() {
   /* End For Print */
 
   const deleteUser = (productID, clientID) => {
-    dispatch(remove_singleUser({ productID, clientID }));
+    if (window.confirm("Bạn muốn xóa người dùng này")) {
+      dispatch(remove_singleUser({ productID, clientID }));
+    }
   };
 
   const updateProducts = (value) => {

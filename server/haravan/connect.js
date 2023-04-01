@@ -215,6 +215,7 @@ router.post("/embed/webhooks", async (req, res) => {
         const product = new Product(item);
         product.save();
       });
+      console.log("Create product success");
       break;
     }
     case "products/update": {
@@ -234,18 +235,26 @@ router.post("/embed/webhooks", async (req, res) => {
             (element.option2 ? `/${element.option2}` : "") +
             (element.option3 ? `/${element.option3}` : ""),
         };
-        await Product.findOneAndUpdate(
+        const response = await Product.findOneAndUpdate(
           {
             codeIMEI: req.body.id,
           },
           item
         );
+        if (response) {
+          console.log("Update product success");
+        } else {
+          console.log("Update/Create product success");
+          const product = new Product(item);
+          product.save();
+        }
       });
       break;
     }
     case "products/deleted": {
       res.sendStatus(200);
       await Product.findOneAndRemove({ codeIMEI: req.body.id });
+      console.log("Delete product success");
       break;
     }
     default:
