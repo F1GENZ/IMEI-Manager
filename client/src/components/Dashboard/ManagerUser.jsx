@@ -35,7 +35,11 @@ function Manager_User() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isErrorClient) toast.error(messageClient);
+    if (isErrorClient) {
+      if (messageClient === "Not authorized")
+        window.location.href = "http://zedition.myharavan.com/admin";
+      toast.error(messageClient);
+    }
     dispatch(
       get_allClients({
         filter: { key: String(dataSearch), time: dateTime },

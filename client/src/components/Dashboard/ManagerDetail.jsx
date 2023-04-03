@@ -26,7 +26,11 @@ function ManagerDetail() {
 
   const currentId = window.location.pathname.split("/").reverse()[0];
   useEffect(() => {
-    if (isErrorProduct) toast.error(messageProduct);
+    if (isErrorProduct) {
+      if (messageProduct === "Not authorized")
+        window.location.href = "http://zedition.myharavan.com/admin";
+      toast.error(messageProduct);
+    }
     dispatch(get_singleProduct(currentId));
   }, [dispatch, isErrorProduct, messageProduct, currentId]);
 

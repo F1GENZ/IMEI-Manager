@@ -17,7 +17,7 @@ function Dashboard() {
       <Route path="admin/products" element={<ManagerProduct />} />
       <Route path="admin/products/:id" element={<ManagerDetail />} />
       <Route path="admin/users" element={<ManagerUser />} />
-      {/* <Route path="admin/setting" element={<Setting />} /> */}
+      <Route path="admin/setting" element={<Setting />} />
     </Routes>
   );
 }

@@ -8,6 +8,7 @@ const importCSV = async (req, res) => {
   fs.createReadStream(filePath)
     .pipe(fastCSV.parse({ headers: true }))
     .on("error", (error) => {
+      console.log(error);
       res.status(400);
       throw new Error(error);
     })

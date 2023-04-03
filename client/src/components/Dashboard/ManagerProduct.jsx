@@ -16,7 +16,11 @@ function Manager_Product() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isErrorProduct) toast.error(messageProduct);
+    if (isErrorProduct) {
+      if (messageProduct === "Not authorized")
+        window.location.href = "http://zedition.myharavan.com/admin";
+      toast.error(messageProduct);
+    }
     dispatch(
       get_allProducts({
         filter: dataSearch,

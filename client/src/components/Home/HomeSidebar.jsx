@@ -1,4 +1,5 @@
 import {
+  SettingOutlined,
   PieChartOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
@@ -22,7 +23,7 @@ function HomeSidebar(props) {
   const items = [
     getItem("Quản lý sản phẩm", "/admin/products", <InboxOutlined />),
     getItem("Quản lý người dùng", "/admin/users", <PieChartOutlined />),
-    // getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
+    getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
   ];
   return (
     <Sider
