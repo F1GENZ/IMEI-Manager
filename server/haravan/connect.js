@@ -220,6 +220,7 @@ router.post("/embed/webhooks", async (req, res) => {
     }
     case "products/update": {
       res.sendStatus(200);
+      console.log(req);
       req.body.variants.forEach(async (element) => {
         const item = {
           productTitle: req.body.title,
