@@ -26,11 +26,45 @@ export const get_allClients = createAsyncThunk(
   }
 );
 
+export const update_singleClient = createAsyncThunk(
+  "clients/update",
+  async (data, thunkAPI) => {
+    try {
+      return await clientServices.call_updateClient(data);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const delete_singleClients = createAsyncThunk(
+  "clients/delete",
+  async (data, thunkAPI) => {
+    try {
+      return await clientServices.call_deleteClient(data);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const clientSlice = createSlice({
   name: "client",
   initialState,
   reducers: {
-    reset: (state) => {
+    resetClient: (state) => {
       state.isErrorClient = false;
       state.isSuccessClient = false;
       state.isLoadingClient = false;
@@ -44,7 +78,6 @@ export const clientSlice = createSlice({
       })
       .addCase(get_allClients.fulfilled, (state, action) => {
         state.isLoadingClient = false;
-        state.isSuccessClient = true;
         state.clients = action.payload;
       })
       .addCase(get_allClients.rejected, (state, action) => {
@@ -52,9 +85,33 @@ export const clientSlice = createSlice({
         state.isErrorClient = true;
         state.messageClient = action.payload;
         state.clients = null;
+      })
+      .addCase(delete_singleClients.pending, (state) => {
+        state.isLoadingClient = true;
+      })
+      .addCase(delete_singleClients.fulfilled, (state, action) => {
+        state.isLoadingClient = false;
+        state.isSuccessClient = true;
+        state.messageClient = action.payload;
+      })
+      .addCase(delete_singleClients.rejected, (state, action) => {
+        state.isLoadingClient = true;
+        state.messageClient = action.payload;
+      })
+      .addCase(update_singleClient.pending, (state) => {
+        state.isLoadingClient = true;
+      })
+      .addCase(update_singleClient.fulfilled, (state, action) => {
+        state.isLoadingClient = false;
+        state.isSuccessClient = true;
+        state.messageClient = action.payload;
+      })
+      .addCase(update_singleClient.rejected, (state, action) => {
+        state.isLoadingClient = true;
+        state.messageClient = action.payload;
       });
   },
 });
 
-export const { reset } = clientSlice.actions;
+export const { resetClient } = clientSlice.actions;
 export default clientSlice.reducer;

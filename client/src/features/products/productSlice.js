@@ -60,28 +60,11 @@ export const update_singleProduct = createAsyncThunk(
   }
 );
 
-export const remove_singleUser = createAsyncThunk(
-  "products/remove_user",
-  async (data, thunkAPI) => {
-    try {
-      return await productServices.delete_singleUser(data);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
-    reset: (state) => {
+    resetProduct: (state) => {
       state.isErrorProduct = false;
       state.isSuccessProduct = false;
       state.isLoadingProduct = false;
@@ -95,42 +78,12 @@ export const productSlice = createSlice({
       })
       .addCase(get_allProducts.fulfilled, (state, action) => {
         state.isLoadingProduct = false;
-        state.isSuccessProduct = true;
         state.products = action.payload;
       })
       .addCase(get_allProducts.rejected, (state, action) => {
         state.isLoadingProduct = true;
         state.isErrorProduct = true;
         state.messageProduct = action.payload;
-        state.products = null;
-      })
-      .addCase(get_singleProduct.pending, (state) => {
-        state.isLoadingProduct = true;
-      })
-      .addCase(get_singleProduct.fulfilled, (state, action) => {
-        state.isLoadingProduct = false;
-        state.isSuccessProduct = true;
-        state.products = action.payload;
-      })
-      .addCase(get_singleProduct.rejected, (state, action) => {
-        state.isLoadingProduct = true;
-        state.isErrorProduct = true;
-        state.messageProduct = action.payload;
-        state.products = null;
-      })
-      .addCase(remove_singleUser.pending, (state) => {
-        state.isLoadingProduct = true;
-      })
-      .addCase(remove_singleUser.fulfilled, (state, action) => {
-        state.isLoadingProduct = false;
-        state.isSuccessProduct = true;
-        state.products = action.payload;
-      })
-      .addCase(remove_singleUser.rejected, (state, action) => {
-        state.isLoadingProduct = true;
-        state.isErrorProduct = true;
-        state.messageProduct = action.payload;
-        state.products = null;
       })
       .addCase(update_singleProduct.pending, (state) => {
         state.isLoadingProduct = true;
@@ -138,16 +91,15 @@ export const productSlice = createSlice({
       .addCase(update_singleProduct.fulfilled, (state, action) => {
         state.isLoadingProduct = false;
         state.isSuccessProduct = true;
-        state.products = action.payload;
+        state.messageProduct = action.payload;
       })
       .addCase(update_singleProduct.rejected, (state, action) => {
         state.isLoadingProduct = true;
         state.isErrorProduct = true;
         state.messageProduct = action.payload;
-        state.products = null;
       });
   },
 });
 
-export const { reset } = productSlice.actions;
+export const { resetProduct } = productSlice.actions;
 export default productSlice.reducer;

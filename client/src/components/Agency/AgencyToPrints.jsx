@@ -2,11 +2,11 @@ import { Row, Col } from "antd";
 import { forwardRef } from "react";
 import QRCode from "qrcode.react";
 
-const ComponentToPrint = forwardRef((props, ref) => {
-  const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee?proid=${props.proID}&varid=${props.varID}`;
-  // https://lt-ecommerce.myharavan.com/pages/guarantee?proid=1045865207&varid=1101671267
+const AgencyToPrints = forwardRef((props, ref) => {
+  let { data } = props;
   let domPrint = [];
-  for (let i = 0; i < props.count; i++) {
+  for (let i = 0; i < data.length; i++) {
+    const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee-agency?objid=${data[i]._id}&orderid=${data[i].order}&proid=${data[i].products.productID}&varid=${data[i].variant}`;
     domPrint.push(
       <Col
         key={i}
@@ -53,4 +53,4 @@ const ComponentToPrint = forwardRef((props, ref) => {
   );
 });
 
-export default ComponentToPrint;
+export default AgencyToPrints;

@@ -30,15 +30,18 @@ const getProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const id = req.params.id;
-  const timeGuarantee = req.query.timeGuarantee;
-  const response = await Product.findOne({ _id: id })
-    .populate("clientGuarantee")
-    .exec();
-
-  response.timeGuarantee = timeGuarantee;
-  response.save();
-  res.status(200).json({ response });
+  try {
+    const id = req.params.id;
+    const timeGuarantee = req.query.timeGuarantee;
+    await Product.findOneAndUpdate(
+      { _id: id },
+      { timeGuarantee },
+      { safe: true, multi: false }
+    );
+    res.status(200).json("Cập nhật sản phẩm thành công");
+  } catch (error) {
+    res.status(400).json("Cập nhật sản phẩm thất bại");
+  }
 };
 
 const deleteUser = async (req, res) => {

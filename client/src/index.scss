@@ -67,6 +67,9 @@ html {
   .imei-item-head {
     padding-bottom: 15px;
     box-shadow: inset 0 -1px 0 rgb(38 50 56 / 10%);
+    h4 {
+      margin-bottom: 5px;
+    }
   }
 }
 
@@ -109,6 +112,10 @@ html {
 .d-flex {
   display: flex;
 }
+.d-v-center {
+  display: flex;
+  align-items: center;
+}
 
 .ant-typography {
   margin-top: 0;
@@ -126,12 +133,61 @@ html {
   text-align: center;
 }
 
-.visible-md{
+.visible-md {
   display: none;
-  @media(max-width: 991px){ display: inline-block; margin-right: 5px; }
+  @media (max-width: 991px) {
+    display: inline-block;
+    margin-right: 5px;
+  }
 }
 
-.hidden-md{
+.hidden-md {
   display: inline-block;
-  @media(max-width: 991px){ display: none; }
+  @media (max-width: 991px) {
+    display: none;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+// Print
+.toPrint {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttonToPrint {
+  background-color: #1677ff;
+  box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
+  border: none;
+  border: 1px solid #1677ff;
+  cursor: pointer;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 0.5s;
+  &:hover {
+    background: transparent;
+    color: #1677ff;
+  }
+}
+
+.listProduct, .listUser {
+  .ant-collapse-header {
+    padding: 0 !important;
+    h4 {
+      margin-top: 0;
+    }
+  }
+  .ant-collapse-content-box{
+    padding: 15px 0 0 !important;
+  }
+}
+
+.modalToClient{
+  form{
+    text-align: right;
+  }
 }

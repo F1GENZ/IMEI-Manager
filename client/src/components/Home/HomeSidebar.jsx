@@ -1,7 +1,9 @@
 import {
   SettingOutlined,
-  PieChartOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
   InboxOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Image, Typography } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,7 +24,9 @@ function HomeSidebar(props) {
   }
   const items = [
     getItem("Quản lý sản phẩm", "/admin/products", <InboxOutlined />),
-    getItem("Quản lý người dùng", "/admin/users", <PieChartOutlined />),
+    getItem("Quản lý người dùng", "/admin/users", <UserAddOutlined />),
+    getItem("Quản lý đại lý", "/admin/agency", <UsergroupAddOutlined />),
+    getItem("Quản lý thông báo", "/admin/notify", <AlertOutlined />),
     getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
   ];
   return (

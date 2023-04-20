@@ -1,6 +1,5 @@
 import { HomeTwoTone } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function HomeBreadCrumb(props) {
@@ -8,32 +7,22 @@ function HomeBreadCrumb(props) {
   const location = useLocation();
   const pathSnippets = location.pathname.split("/").filter((i) => i);
 
-  const { products } = useSelector((state) => state.product);
-
   const breadcrumbNameMap = {
     products: "Quản lý sản phẩm",
     users: "Quản lý người dùng",
+    agency: "Quản lý đại lý",
+    notify: "Quản lý thông báo",
     setting: "Cài đặt",
   };
 
   const extraBreadcrumbItems = pathSnippets.map((value, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
     let breadcrumbData;
-    if (breadcrumbNameMap[value]) {
-      breadcrumbData = (
-        <Breadcrumb.Item key={url} href="#" onClick={(e) => navigate(url)}>
-          {breadcrumbNameMap[value]}
-        </Breadcrumb.Item>
-      );
-    } else {
-      if (products && products.response) {
-        if (products.response._id === value) {
-          breadcrumbData = (
-            <Breadcrumb.Item key={url}>{products.response.productTitle}</Breadcrumb.Item>
-          );
-        }
-      }
-    }
+    breadcrumbData = (
+      <Breadcrumb.Item key={url} href="#" onClick={(e) => navigate(url)}>
+        {breadcrumbNameMap[value]}
+      </Breadcrumb.Item>
+    );
     return breadcrumbData;
   });
 

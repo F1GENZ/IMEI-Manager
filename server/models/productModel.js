@@ -2,18 +2,22 @@ import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema(
   {
+    productID: Number,
     productTitle: { type: String, text: true },
     productImage: String,
     productVendor: String,
+    productType: String,
     productHandle: String,
-    variantID: Number,
-    variantTitle: String,
-    codeIMEI: { type: String, default: "" },
+    productVariant: {
+      type: Array,
+      default: [],
+    },
     timeGuarantee: Number,
     clientGuarantee: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Client",
+        default: [],
       },
     ],
   },

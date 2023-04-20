@@ -9,7 +9,9 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import HaravanRouter from "./haravan/connect.js";
+import WebhookRouter from "./routes/webhookRouter.js";
 import connectDB from "./configs/db.js";
+import routerNotify from "./routes/notifyRoute.js";
 import routerProduct from "./routes/productRoute.js";
 import routerClient from "./routes/clientRoute.js";
 import routerFile from "./routes/fileRoute.js";
@@ -25,9 +27,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/", HaravanRouter);
+app.use("/", WebhookRouter);
 app.use("/embed/clients", routerClient);
 app.use("/embed/products", routerProduct);
 app.use("/embed/file", routerFile);
+app.use("/embed/notify", routerNotify);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/build")));
