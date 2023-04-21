@@ -5,14 +5,14 @@ import QRCode from "qrcode.react";
 const AgencyToPrints = forwardRef((props, ref) => {
   let { data } = props;
   let domPrint = [];
-  for (let i = 0; i < data.length; i++) {
-    const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee-agency?objid=${data[i]._id}&orderid=${data[i].order}&proid=${data[i].products.productID}&varid=${data[i].variant}`;
+  for (let i = 0; i < data.list.length; i++) {
+    const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee-agency?objid=${data.list[i]._id}&orderid=${data.list[i].order}&proid=${data.list[i].productID}&varid=${data.list[i].variant}`;
     domPrint.push(
       <Col
         key={i}
         span={8}
         className="d-flex"
-        style={{ padding: "0 5px 0 10px", alignItems: "center" }}
+        style={{ padding: "0 5px 0 10px", alignItems: "center", position: 'relative' }}
       >
         <QRCode
           renderAs="svg"
@@ -26,6 +26,7 @@ const AgencyToPrints = forwardRef((props, ref) => {
             height: 20,
           }}
         />
+        <span style={{ position: 'absolute', right: '5px', 'bottom': '5px', fontSize: '7px', lineHeight: 1 }}>{ i + 1 }</span>
         <p
           style={{
             width: "45px",

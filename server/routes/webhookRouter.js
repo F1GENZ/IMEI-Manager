@@ -93,11 +93,6 @@ router.post("/embed/webhooks", async (req, res) => {
         } else {
           const newClient = await apiClient.autoCreateClientNP(data);
           if (!newClient) throw new Error("Create Client Error");
-          await apiNotify.createNotify(
-            "clientNP",
-            "Bạn có 1 đơn hàng Online không có thông tin khách hàng",
-            newClient
-          );
         }
       }
       console.log("Auto create client success");

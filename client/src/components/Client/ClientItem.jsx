@@ -50,6 +50,10 @@ function ClientItem({ client }) {
                 <Text strong>Số điện thoại:</Text>
                 {client.phone || "Chưa có thông tin"}
               </Space>
+              <Space>
+                <Text strong>Số lần bảo hành:</Text>
+                {client.countGuarantee}
+              </Space>
               {(!client.name || !client.phone) && (
                 <Button
                   danger

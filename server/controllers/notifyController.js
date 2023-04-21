@@ -1,4 +1,5 @@
 import Notify from "../models/notifyModel.js";
+import Client from "../models/clientModel.js";
 
 const getNotify = async (req, res) => {
   try {
@@ -26,9 +27,11 @@ const createNotifyFetch = async (req, res) => {
     const type = req.body.type;
     const message = req.body.message;
     const target = req.body.target;
+    const phone = req.body.phone;
     if (!type) throw "Missing Type";
     if (!message) throw "Missing Message";
     if (!target) throw "Missing Target";
+    if (!phone) throw "Missing Phone";
     const notifyExists = await Notify.findOne({ target });
     if (notifyExists) {
       throw "Yêu cầu đang được xử lý";
@@ -38,6 +41,9 @@ const createNotifyFetch = async (req, res) => {
         message,
         target,
       });
+      const clientExists = await Client.findOne({ phone });
+      clientExists.countGuarantee = clientExists.countGuarantee + 1;
+      await clientExists.save();
       res.status(200).json("Yêu cầu đã được gửi thành công");
     }
   } catch (error) {

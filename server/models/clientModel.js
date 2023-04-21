@@ -20,6 +20,10 @@ const clientSchema = new mongoose.Schema(
       type: String,
       default: false,
     },
+    countGuarantee: {
+      type: Number,
+      default: 0
+    },
     data: [
       {
         order: {

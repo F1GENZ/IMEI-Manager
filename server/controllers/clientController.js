@@ -309,6 +309,38 @@ const updateClientWebhook = async (data) => {
   }
 };
 
+const activeAllAgencty = async (req, res) => {
+  try {
+    const data = req.body.params;
+console.log(data);
+    let client = {
+      name: null,
+      phone: null,
+      agency: false,
+      data: await Promise.map(data.list, async (item) => {
+        return {
+          order: item.order,
+          variant: item.variant,
+          quantity: item.quantity,
+          timeStart: moment().format("YYYY-MM-DD"),
+          timeEnd: moment()
+            .add(item.products.timeGuarantee, "months")
+            .format("YYYY-MM-DD"),
+          products: item.products,
+        };
+      }),
+    };
+    let newClient = new Client(client);
+    await newClient.save();
+
+    await Client.findByIdAndDelete(data._id);
+
+    res.status(200).json("Kích hoạt bảo hành cho đại lý thành công");
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
 const apiClient = {
   createClient,
   getUsers,
@@ -319,6 +351,7 @@ const apiClient = {
   updateClient,
   deleteClient,
   flagClient,
+  activeAllAgencty,
   // For Webhook
   updateClientWebhook,
 };

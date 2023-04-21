@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { get_allNotify, resetNotify } from "../../features/notify/notifySlice";
 import { toast } from "react-toastify";
-import { Divider, List, Space, Typography } from "antd";
+import { Divider, List, Space } from "antd";
 import NotifyItem from "../Notify/NotifyItem";
 import { Content } from "antd/es/layout/layout";
 

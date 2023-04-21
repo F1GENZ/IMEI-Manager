@@ -21,8 +21,8 @@ const config = {
   scope_login: "openid profile email org userinfo",
   scope:
     "openid profile email org userinfo com.write_orders com.read_orders com.write_products com.read_products grant_service wh_api",
-  login_callback_url: `http://localhost:5000/install/login`,
-  install_callback_url: `http://localhost:5000/install/grandservice`,
+  login_callback_url: `https://imei-manager-zqz6j.ondigitalocean.app/install/login`,
+  install_callback_url: `https://imei-manager-zqz6j.ondigitalocean.app/install/grandservice`,
   orgid: "200000632501",
   webhook: {
     subscribe: "https://webhook.haravan.com/api/subscribe",
@@ -87,7 +87,7 @@ router.post("/install/login", async (req, res) => {
     const shopExists = await Auth.find({ origid });
     if (shopExists.length !== 0) {
       res.redirect(
-        `http://localhost:3000/authentication?access_token=${shopExists[0].access_token}`
+        `https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${shopExists[0].access_token}`
       );
     } else {
       const url = `https://accounts.haravan.com/connect/authorize?response_mode=${config.response_mode}&response_type=${config.response_type}&scope=${config.scope}&client_id=${config.app_id}&redirect_uri=${config.install_callback_url}&nonce=${config.nonce}&orgid=${config.orgid}`;
@@ -128,7 +128,7 @@ router.post("/install/grandservice", async (req, res) => {
       }
     }
     res.redirect(
-      `http://localhost:3000/authentication?access_token=${authorizeInfo.access_token}`
+      `https://imei-manager-zqz6j.ondigitalocean.app/authentication?access_token=${authorizeInfo.access_token}`
     );
   } catch (error) {
     res.status(400).json(error);

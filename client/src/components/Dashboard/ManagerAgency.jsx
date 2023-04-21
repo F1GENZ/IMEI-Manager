@@ -22,18 +22,15 @@ function ManagerAgency() {
       toast.error(messageClient);
     }
     if (isSuccessClient) toast.info(messageClient);
-    if (!clients) {
-      dispatch(
-        get_allClients({
-          filter: { key: String(dataSearch), agency: true },
-          limit,
-          paginate,
-        })
-      );
-    }
+    dispatch(
+      get_allClients({
+        filter: { key: String(dataSearch), agency: true },
+        limit,
+        paginate,
+      })
+    );
     dispatch(resetClient());
   }, [
-    clients,
     dataSearch,
     dispatch,
     isSuccessClient,
