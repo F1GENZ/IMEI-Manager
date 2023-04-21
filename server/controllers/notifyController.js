@@ -28,12 +28,10 @@ const createNotifyFetch = async (req, res) => {
     const message = req.body.message;
     const target = req.body.target;
     const phone = req.body.phone;
-    const variant = req.body.variant;
     if (!type) throw "Missing Type";
     if (!message) throw "Missing Message";
     if (!target) throw "Missing Target";
     if (!phone) throw "Missing Phone";
-    if (!variant) throw "Missing Variant";
     const notifyExists = await Notify.findOne({ target });
     if (notifyExists) {
       throw "Yêu cầu đang được xử lý";
@@ -43,13 +41,9 @@ const createNotifyFetch = async (req, res) => {
         message,
         target,
       });
-      await Client.findOne({ phone }).then(
-        async (data) => {
-          item = data.data.variant(variant);
-          item.countGuarantee = item.countGuarantee + 1;
-          await data.save();
-        }
-      );
+      const clientExists = await Client.findOne({ phone });
+      clientExists.countGuarantee = clientExists.countGuarantee + 1;
+      await clientExists.save();
       res.status(200).json("Yêu cầu đã được gửi thành công");
     }
   } catch (error) {

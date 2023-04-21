@@ -20,6 +20,10 @@ const clientSchema = new mongoose.Schema(
       type: String,
       default: false,
     },
+    countGuarantee: {
+      type: Number,
+      default: 0
+    },
     data: [
       {
         order: {
@@ -50,10 +54,6 @@ const clientSchema = new mongoose.Schema(
         products: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
-        },
-        countGuarantee: {
-          type: Number,
-          default: 0
         },
       },
     ],
