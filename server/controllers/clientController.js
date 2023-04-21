@@ -95,24 +95,26 @@ const getUsers = async (req, res) => {
         },
       ],
     };
-    //if (isNaN(filter.key)) {
+    if (filter.key) {
       conditional.$and.push({
         $text: {
           $search: filter.key,
         },
       });
+    }
     // } else {
     //   conditional.$and.push({ phone: { $lte: filter.key } });
     // }
     if (filter.agency) conditional.$and.push({ agency: filter.agency });
     if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
   } else {
-    //if (isNaN(filter.key)) {
+    if (filter.key) {
       conditional = {
         $text: {
           $search: filter.key,
         },
       };
+    }
     // } else {
     //   conditional.phone = { $regex: filter.key };
     // }
