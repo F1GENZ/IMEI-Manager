@@ -95,32 +95,32 @@ const getUsers = async (req, res) => {
         },
       ],
     };
-    if (isNaN(filter.key)) {
+    //if (isNaN(filter.key)) {
       conditional.$and.push({
         $text: {
           $search: filter.key,
         },
       });
-    } else {
-      conditional.$and.push({ phone: { $lte: filter.key } });
-    }
+    // } else {
+    //   conditional.$and.push({ phone: { $lte: filter.key } });
+    // }
     if (filter.agency) conditional.$and.push({ agency: filter.agency });
-    //if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
+    if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
   } else {
-    if (isNaN(filter.key)) {
+    //if (isNaN(filter.key)) {
       conditional = {
         $text: {
           $search: filter.key,
         },
       };
-    } else {
-      conditional.phone = { $regex: filter.key };
-    }
-    if (filter.agency) conditional.agency = filter.agency;
-    // if (filter.noname === "Yes") {
-    //   conditional.name = null;
-    //   conditional.phone = null;
+    // } else {
+    //   conditional.phone = { $regex: filter.key };
     // }
+    if (filter.agency) conditional.agency = filter.agency;
+    if (filter.noname === "Yes") {
+      conditional.name = null;
+      conditional.phone = null;
+    }
   }
   const response = await Client.find(conditional)
     .sort({ updatedAt: -1 })
@@ -312,7 +312,7 @@ const updateClientWebhook = async (data) => {
 const activeAllAgencty = async (req, res) => {
   try {
     const data = req.body.params;
-console.log(data);
+    const order = data[0].order;
     let client = {
       name: null,
       phone: null,
@@ -333,7 +333,9 @@ console.log(data);
     let newClient = new Client(client);
     await newClient.save();
 
-    await Client.findByIdAndDelete(data._id);
+    const oldClient = await Client.findById(data._id);
+    oldClient.data.pull({ order: order });
+    oldClient.save();
 
     res.status(200).json("Kích hoạt bảo hành cho đại lý thành công");
   } catch (error) {
