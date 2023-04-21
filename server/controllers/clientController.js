@@ -106,7 +106,8 @@ const getUsers = async (req, res) => {
     //   conditional.$and.push({ phone: { $lte: filter.key } });
     // }
     if (filter.agency) conditional.$and.push({ agency: filter.agency });
-    if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
+    if (filter.noname === "Yes")
+      conditional.$and.push({ name: null, phone: null });
   } else {
     if (filter.key) {
       conditional = {
@@ -334,9 +335,11 @@ const activeAllAgencty = async (req, res) => {
     let newClient = new Client(client);
     await newClient.save();
 
-    const oldClient = await Client.findById(data._id);
-    oldClient.data.pull({ order: data.order });
-    oldClient.save();
+    await Client.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(data._id) },
+      { $pull: { data: { order: data.order } } },
+      { safe: true, multi: false }
+    );
 
     res.status(200).json("Kích hoạt bảo hành cho đại lý thành công");
   } catch (error) {
