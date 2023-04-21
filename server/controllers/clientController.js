@@ -314,7 +314,6 @@ const updateClientWebhook = async (data) => {
 const activeAllAgencty = async (req, res) => {
   try {
     const data = req.body.params;
-    const order = data[0].order;
     let client = {
       name: null,
       phone: null,
@@ -336,7 +335,7 @@ const activeAllAgencty = async (req, res) => {
     await newClient.save();
 
     const oldClient = await Client.findById(data._id);
-    oldClient.data.pull({ order: order });
+    oldClient.data.pull({ order: data.order });
     oldClient.save();
 
     res.status(200).json("Kích hoạt bảo hành cho đại lý thành công");
