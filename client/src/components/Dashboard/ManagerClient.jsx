@@ -20,7 +20,7 @@ const { RangePicker } = DatePicker;
 function Manager_User() {
   /* Filter */
   const [dataSearch, setDataSearch] = useState("");
-  const [noName, setNoName] = useState(null);
+  const [noName, setNoName] = useState("No");
   const [dateTime, setDateTime] = useState([]);
   /* End Filter */
 
@@ -116,7 +116,7 @@ function Manager_User() {
             unCheckedChildren="Mặc định"
             checkedChildren="Cập nhật"
             onChange={(checked) =>
-              checked ? setNoName(true) : setNoName(null)
+              checked ? setNoName("Yes") : setNoName("No")
             }
           />
         </Col>

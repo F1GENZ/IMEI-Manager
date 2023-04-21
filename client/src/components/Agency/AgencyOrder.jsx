@@ -27,14 +27,14 @@ function AgencyOrder({ data }) {
       }
       extra={
         <Space>
-          {/* <Button
+          <Button
             size="small"
             danger
             icon={<AlertOutlined />}
             onClick={() => onActiveAll()}
           >
             Kích hoạt tất cả
-          </Button> */}
+          </Button>
           <ReactToPrint
             trigger={() => (
               <Button size="small" type="primary" icon={<PrinterOutlined />}>
