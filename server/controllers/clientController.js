@@ -105,7 +105,7 @@ const getUsers = async (req, res) => {
       conditional.$and.push({ phone: { $lte: filter.key } });
     }
     if (filter.agency) conditional.$and.push({ agency: filter.agency });
-    if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
+    //if (filter.noname === "Yes") conditional.$and.push({ name: null, phone: null });
   } else {
     if (isNaN(filter.key)) {
       conditional = {
@@ -117,10 +117,10 @@ const getUsers = async (req, res) => {
       conditional.phone = { $regex: filter.key };
     }
     if (filter.agency) conditional.agency = filter.agency;
-    if (filter.noname === "Yes") {
-      conditional.name = null;
-      conditional.phone = null;
-    }
+    // if (filter.noname === "Yes") {
+    //   conditional.name = null;
+    //   conditional.phone = null;
+    // }
   }
   const response = await Client.find(conditional)
     .sort({ updatedAt: -1 })
