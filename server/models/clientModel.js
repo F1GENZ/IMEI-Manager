@@ -4,12 +4,12 @@ const clientSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      text: true,
+      default: "",
       require: [true, "Please add Name"],
     },
     phone: {
       type: String,
-      text: true,
+      default: "",
       require: [true, "Please add Phone Number"],
     },
     agency: {
@@ -20,10 +20,7 @@ const clientSchema = new mongoose.Schema(
       type: String,
       default: false,
     },
-    countGuarantee: {
-      type: Number,
-      default: 0
-    },
+    agencyName: String,
     data: [
       {
         order: {
@@ -55,10 +52,14 @@ const clientSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
+        countGuarantee: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
   },
   { timestamps: true }
 );
-clientSchema.index({ name: "text" }, { phone: "text " });
+clientSchema.index({ name: "text", phone: "text" });
 export default mongoose.model("Client", clientSchema);

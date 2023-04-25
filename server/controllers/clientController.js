@@ -4,43 +4,33 @@ import Client from "../models/clientModel.js";
 import mongoose from "mongoose";
 import Promise from "bluebird";
 
-const createClient = async (req, res) => {
+const createClient = async (data) => {
   try {
-    const { flagid, orderid, proid, varid, name, phone } = req.query;
-    if (!flagid) throw "Missing FlagID";
-    if (!orderid) throw "Missing OrderID";
-    if (!proid) throw "Missing proID";
-    if (!varid) throw "Missing varID";
-    if (!name) throw "Missing name";
-    if (!phone) throw "Missing phone";
+    const { name, phone, flagid } = data;
 
-    const flagClientExists = await Client.findOneAndUpdate(
-      { "data._id": flagid },
-      { $pull: { data: { _id: flagid } } },
-      { safe: true, multi: false }
-    );
-    if (!flagClientExists) throw "FlagClient Not Found";
-    flagClientExists.data.pull({ _id: flagid });
-    await flagClientExists.save();
+    const flagClientExists = await Client.findOne({ "data._id": flagid })
+      .populate("data.products")
+      .exec();
 
-    const productExists = await Product.findOne({
-      productID: proid,
-    });
-    if (!productExists) throw "Không tìm thấy thông tin sản phẩm";
+    if (!flagClientExists) throw "Missing Flag Client";
 
-    let client = {
+    const flagFilter = flagClientExists.data.filter(
+      (element) => element._id.toString() === flagid
+    )[0];
+
+    const client = {
       name,
       phone,
       agency: false,
       data: [
         {
-          order: orderid,
-          variant: varid,
+          order: flagFilter.order,
+          variant: flagFilter.variant,
           quantity: 1,
           timeEnd: moment()
-            .add(productExists.timeGuarantee, "months")
+            .add(flagFilter.products.timeGuarantee, "months")
             .format("YYYY-MM-DD"),
-          products: productExists._id,
+          products: flagFilter.products._id,
         },
       ],
     };
@@ -54,99 +44,92 @@ const createClient = async (req, res) => {
       });
       await clientExists.save();
     }
-    res.status(200).json(client);
+
+    flagClientExists.data.pull({ _id: flagid });
+    await flagClientExists.save();
+
+    return clientExists;
   } catch (error) {
-    res.status(401).json(error);
+    return error;
   }
 };
 
-const getUser = async (req, res) => {
+const getUser = async (data) => {
   try {
-    const proID = req.query.proid;
-    const varID = req.query.varid;
-    const phone = req.query.phone;
-    if (!proID) throw "Missing Product ID";
-    if (!varID) throw "Missing Variant ID";
-    if (!phone) throw "Missing Phone Number";
+    if (!data) throw "Missing Data";
+    const { phone, variant } = data;
     const response = await Client.findOne({
-      $and: [{ phone }, { "data.variant": varID }],
+      $and: [{ phone }, { "data.variant": variant }],
     })
       .populate("data.products")
       .exec();
-    res.status(200).json(response);
+    if (!response)
+      throw "Vui lòng kiểm tra lại số điện thoại, bạn chưa có thông tin bảo hành cho sản phẩm này";
+    return { client: response };
   } catch (error) {
-    res.status(401).json(error);
+    return { error };
   }
 };
 
-const getUsers = async (req, res) => {
-  const filter = req.query.filter;
-  const limit = req.query.limit;
-  const paginate = req.query.paginate;
-  let conditional = {};
-  if (typeof filter.time !== "undefined" && filter.time.length > 0) {
-    const timeStart = moment(filter.time[0]).toDate();
-    const timeEnd = moment(filter.time[1]).startOf("day").toDate();
-    conditional = {
-      $and: [
-        {
-          timeStart: { $gte: timeStart },
-          timeEnd: { $lte: timeEnd },
-        },
-      ],
-    };
-    if (filter.key) {
-      conditional.$and.push({
-        $text: {
-          $search: filter.key,
-        },
-      });
-    }
-    // } else {
-    //   conditional.$and.push({ phone: { $lte: filter.key } });
-    // }
-    if (filter.agency) conditional.$and.push({ agency: filter.agency });
-    if (filter.noname === "Yes")
-      conditional.$and.push({ name: null, phone: null });
-  } else {
-    if (filter.key) {
-      conditional = {
-        $text: {
-          $search: filter.key,
-        },
-      };
-    }
-    // } else {
-    //   conditional.phone = { $regex: filter.key };
-    // }
-    if (filter.agency) conditional.agency = filter.agency;
-    if (filter.noname === "Yes") {
-      conditional.name = null;
-      conditional.phone = null;
-    }
-  }
-  const response = await Client.find(conditional)
-    .sort({ updatedAt: -1 })
-    .limit(limit)
-    .skip((paginate - 1) * limit)
-    .populate("data.products")
-    .exec();
-  const count = await Client.find(conditional).count();
-  res.status(200).json({ response, totalPages: count, page: paginate });
-};
-
-const updateClient = async (req, res) => {
+const getUsers = async (data) => {
   try {
-    const { id, name, phone } = req.body.params;
+    const { key, agency, noname, limit, paginate } = data;
+    let conditional = {};
+    if (typeof time !== "undefined" && time.length > 0) {
+      const timeStart = moment(time[0]).toDate();
+      const timeEnd = moment(time[1]).startOf("day").toDate();
+      conditional = {
+        $and: [
+          {
+            timeStart: { $gte: timeStart },
+            timeEnd: { $lte: timeEnd },
+          },
+        ],
+      };
+      if (key) {
+        conditional.$and.push({
+          $or: [{ name: { $regex: key } }, { phone: { $regex: key } }],
+        });
+      }
+      conditional.$and.push({ agency: agency });
+      if (noname === "Yes") conditional.$and.push({ name: "", phone: "" });
+    } else {
+      if (key) {
+        conditional = {
+          $or: [{ name: { $regex: key } }, { phone: { $regex: key } }],
+        };
+      }
+      conditional.agency = agency;
+      if (noname === "Yes") {
+        conditional.name = "";
+        conditional.phone = "";
+      }
+    }
+    const response = await Client.find(conditional)
+      .sort({ updatedAt: -1 })
+      .limit(limit)
+      .skip((paginate - 1) * limit)
+      .populate("data.products")
+      .exec();
+    const count = await Client.find(conditional).count();
+    return { response, totalPages: count, page: paginate };
+  } catch (error) {
+    return error;
+  }
+};
+
+const updateClient = async (data) => {
+  try {
+    const { id, name, phone } = data;
     const clientExists = await Client.findOne({ phone });
     if (clientExists) {
-      res.status(200).json("Số điện thoại đã tồn tại");
+      return "Số điện thoại đã tồn tại";
     } else {
       await Client.findByIdAndUpdate(id, { name, phone });
-      res.status(200).json("Cập nhật tài khoản thành công");
+      return "Cập nhật tài khoản thành công";
     }
   } catch (error) {
-    res.status(400).json(error);
+    return error;
   }
 };
 
@@ -199,8 +182,6 @@ const autoCreateClientNP = async (data) => {
   try {
     if (!data) throw "Missing Data";
     let client = {
-      name: null,
-      phone: null,
       agency: false,
       data: await Promise.map(data.line_items, async (item) => {
         const productExists = await Product.findOne({
@@ -282,17 +263,13 @@ const deleteClient = async (req, res) => {
   }
 };
 
-const flagClient = async (req, res) => {
+const flagClient = async (data) => {
   try {
-    const id = req.params.id;
-    const flagClientExists = await Client.findOne({ "data._id": id });
-    if (flagClientExists) {
-      res.status(200).json(flagClientExists);
-    } else {
-      throw "Missing FlagClient";
-    }
+    const flagClientExists = await Client.findOne({ "data._id": data });
+    if (flagClientExists) return flagClientExists;
+    else throw "Missing FlagClient";
   } catch (error) {
-    res.status(400).json(error);
+    return error;
   }
 };
 
@@ -312,38 +289,37 @@ const updateClientWebhook = async (data) => {
   }
 };
 
-const activeAllAgencty = async (req, res) => {
+const activeAgency = async (data) => {
   try {
-    const data = req.body.params;
-    let client = {
-      name: null,
-      phone: null,
-      agency: false,
-      data: await Promise.map(data.list, async (item) => {
-        return {
-          order: item.order,
-          variant: item.variant,
-          quantity: item.quantity,
-          timeStart: moment().format("YYYY-MM-DD"),
-          timeEnd: moment()
-            .add(item.products.timeGuarantee, "months")
-            .format("YYYY-MM-DD"),
-          products: item.products,
+    await Promise.map(
+      data.list,
+      async (item) => {
+        let client = {
+          agency: false,
+          agencyName: data.name,
+          data: {
+            order: item.order,
+            variant: item.variant,
+            quantity: item.quantity,
+            timeStart: moment().format("YYYY-MM-DD"),
+            timeEnd: moment()
+              .add(item.products.timeGuarantee, "months")
+              .format("YYYY-MM-DD"),
+            products: item.products,
+          },
         };
-      }),
-    };
-    let newClient = new Client(client);
-    await newClient.save();
-
-    await Client.findOneAndUpdate(
-      { _id: mongoose.Types.ObjectId(data._id) },
-      { $pull: { data: { order: data.order } } },
-      { safe: true, multi: false }
+        await Client.create(client);
+        await Client.findByIdAndUpdate(
+          { _id: data._id },
+          { $pull: { data: { _id: item._id } } },
+          { safe: true, multi: false }
+        );
+      },
+      { concurrency: 1 }
     );
-
-    res.status(200).json("Kích hoạt bảo hành cho đại lý thành công");
+    return "Kích hoạt bảo hành cho đại lý thành công";
   } catch (error) {
-    res.status(400).json(error);
+    return error;
   }
 };
 
@@ -357,7 +333,7 @@ const apiClient = {
   updateClient,
   deleteClient,
   flagClient,
-  activeAllAgencty,
+  activeAgency,
   // For Webhook
   updateClientWebhook,
 };

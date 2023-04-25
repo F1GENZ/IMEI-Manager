@@ -6,7 +6,7 @@ const AgencyToPrints = forwardRef((props, ref) => {
   let { data } = props;
   let domPrint = [];
   for (let i = 0; i < data.list.length; i++) {
-    const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee-agency?objid=${data.list[i]._id}&orderid=${data.list[i].order}&proid=${data.list[i].productID}&varid=${data.list[i].variant}`;
+    const buildUrl = `https://zedition.vn/pages/agency?objid=${data.list[i]._id}&varid=${data.list[i].variant}`;
     domPrint.push(
       <Col
         key={i}

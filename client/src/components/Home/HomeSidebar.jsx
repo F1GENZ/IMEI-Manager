@@ -27,7 +27,7 @@ function HomeSidebar(props) {
     getItem("Quản lý người dùng", "/admin/users", <UserAddOutlined />),
     getItem("Quản lý đại lý", "/admin/agency", <UsergroupAddOutlined />),
     getItem("Quản lý thông báo", "/admin/notify", <AlertOutlined />),
-    getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
+    //getItem("Cài đặt", "/admin/setting", <SettingOutlined />),
   ];
   return (
     <Sider

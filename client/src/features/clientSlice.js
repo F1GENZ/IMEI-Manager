@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import clientServices from "./clientService";
 
 const initialState = {
   clients: null,
@@ -13,7 +12,7 @@ export const get_allClients = createAsyncThunk(
   "clients/all",
   async (data, thunkAPI) => {
     try {
-      return await clientServices.call_allClients(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&
@@ -30,7 +29,7 @@ export const update_singleClient = createAsyncThunk(
   "clients/update",
   async (data, thunkAPI) => {
     try {
-      return await clientServices.call_updateClient(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&
@@ -47,7 +46,7 @@ export const delete_singleClients = createAsyncThunk(
   "clients/delete",
   async (data, thunkAPI) => {
     try {
-      return await clientServices.call_deleteClient(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&
@@ -64,7 +63,7 @@ export const active_allAgency = createAsyncThunk(
   "clients/activess",
   async (data, thunkAPI) => {
     try {
-      return await clientServices.call_activeAllAgency(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&

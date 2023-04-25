@@ -1,14 +1,18 @@
-import { Row, Col, Modal, Button, Space, Popconfirm, List } from "antd";
+import { Modal, Button, Space, Popconfirm } from "antd";
 import React, { useState } from "react";
-import moment from "moment";
-import { useDispatch } from "react-redux";
-import { delete_singleNotify } from "../../features/notify/notifySlice";
+import { socket } from "../..";
+import { toast } from "react-toastify";
 
-function NotifyItem({ stt, data }) {
-  const dispatch = useDispatch();
+function NotifyItem({ data }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onDeleteNotify = async (id) => {
-    dispatch(delete_singleNotify({ id }));
+    socket.emit("delete-notify", id);
+
+    socket.on("done-delete-notify", (data) => {
+      toast.info(data);
+      socket.emit("get-notify");
+      socket.off("done-delete-notify");
+    });
   };
   return (
     <Space size={50}>
@@ -18,7 +22,7 @@ function NotifyItem({ stt, data }) {
         title="Bạn có chắc đã hoàn thành thông báo này?"
         onConfirm={(e) => onDeleteNotify(data._id)}
         okText="Tiếp tục"
-        cancelText="Bỏ qua" 
+        cancelText="Bỏ qua"
       >
         <Button type="text" danger size="small">
           Hoàn thành?

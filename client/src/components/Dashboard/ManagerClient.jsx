@@ -7,73 +7,70 @@ import {
   Divider,
   List,
   Switch,
+  Space,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { get_allClients, resetClient } from "../../features/client/clientSlice";
+import { get_allClients, resetClient } from "../../features/clientSlice";
 import { toast } from "react-toastify";
 import ClientItem from "../Client/ClientItem";
+import { socket } from "../..";
 
 const { RangePicker } = DatePicker;
 
 function Manager_User() {
-  /* Filter */
-  const [dataSearch, setDataSearch] = useState("");
-  const [noName, setNoName] = useState("No");
-  const [dateTime, setDateTime] = useState([]);
-  /* End Filter */
-
-  const limit = 7;
-  const [paginate, setPaginate] = useState(1);
-  const { clients, isErrorClient, isSuccessClient, messageClient } =
-    useSelector((state) => state.client);
+  const [dataFilter, setDataFilter] = useState({
+    key: "",
+    time: [],
+    agency: false,
+    noname: "No",
+    limit: 9,
+    paginate: 1,
+  });
+  const { clients, messageClient } = useSelector((state) => state.client);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isErrorClient) {
-      if (messageClient === "Not authorized")
-        window.location.href = "http://zedition.myharavan.com/admin";
-      toast.error(messageClient);
-    }
-    if (isSuccessClient) toast.info(messageClient);
-    dispatch(
-      get_allClients({
-        filter: {
-          key: String(dataSearch),
-          time: dateTime,
-          agency: false,
-          noname: noName,
-        },
-        limit,
-        paginate,
-      })
-    );
+    messageClient && toast.info(messageClient);
+
+    socket.emit("get-clients", dataFilter);
+
+    socket.on("done-get-clients", (data) => {
+      dispatch(get_allClients(data));
+    });
+
+    socket.on("done-create-clients-wh", (data) => {
+      toast.info(data);
+      socket.emit("get-clients", dataFilter);
+    });
+
+    socket.on("done-create-clients-web", (data) => {
+      console.log(data);
+      toast.info("Bạn có một kích hoạt bảo hành mới");
+      socket.emit("get-clients", dataFilter);
+    });
+
     dispatch(resetClient());
-  }, [
-    noName,
-    dataSearch,
-    dateTime,
-    dispatch,
-    isSuccessClient,
-    isErrorClient,
-    messageClient,
-    limit,
-    paginate,
-  ]);
+    return () => {
+      socket.off("done-get-clients");
+      socket.off("done-create-clients-wh");
+      socket.off("done-create-clients-web");
+    };
+  }, [dataFilter, dispatch, messageClient]);
 
   const clientItems = clients && clients.response && (
     <List
       className="listUser"
       footer={
-        clients.totalPages > limit &&
+        clients.totalPages > dataFilter.limit &&
         clients.totalPages && (
           <Pagination
-            defaultPageSize={limit}
-            defaultCurrent={paginate}
+            defaultPageSize={dataFilter.limit}
+            defaultCurrent={dataFilter.paginate}
             total={clients.totalPages}
             onChange={(page, pageSize) => {
-              setPaginate(page);
+              setDataFilter((prev) => ({ ...prev, paginate: page }));
             }}
           />
         )
@@ -87,38 +84,49 @@ function Manager_User() {
 
   const handlePicker = (dates, dateStrings) => {
     if (dateStrings[0] === "" && dateStrings[1] === "") {
-      setDateTime([]);
+      setDataFilter((prevState) => ({ ...prevState, time: [] }));
     } else {
-      setDateTime(dateStrings);
+      setDataFilter((prevState) => ({ ...prevState, time: dateStrings }));
     }
   };
 
   return (
     <Content className="dashboard-product">
-      <Row gutter={[15, 15]}>
-        <Col lg={16} md={24} sm={24} xs={24}>
+      <Row gutter={[15, 15]} style={{ alignItems: "center" }}>
+        <Col lg={15} md={24} sm={24} xs={24}>
           <Input.Search
             addonBefore="Khách hàng: "
             placeholder="Nhập tên người dùng..."
             enterButton
-            defaultValue={dataSearch}
-            onSearch={(value) => setDataSearch(value)}
+            defaultValue={dataFilter.key}
+            onSearch={(value) =>
+              setDataFilter((prevState) => ({ ...prevState, key: value }))
+            }
           />
         </Col>
-        <Col lg={6} md={24} sm={24} xs={24}>
+        <Col lg={5} md={24} sm={24} xs={24}>
           <RangePicker
             inputReadOnly
             onChange={(dates, dateStrings) => handlePicker(dates, dateStrings)}
           />
         </Col>
-        <Col lg={2} md={24} sm={24} xs={24}>
-          <Switch
-            unCheckedChildren="Mặc định"
-            checkedChildren="Cập nhật"
-            onChange={(checked) =>
-              checked ? setNoName("Yes") : setNoName("No")
-            }
-          />
+        <Col lg={4} md={24} sm={24} xs={24}>
+          <Space>
+            Khách hàng vãng lai
+            <Switch
+              onChange={(checked) =>
+                checked
+                  ? setDataFilter((prevState) => ({
+                      ...prevState,
+                      noname: "Yes",
+                    }))
+                  : setDataFilter((prevState) => ({
+                      ...prevState,
+                      noname: "No",
+                    }))
+              }
+            />
+          </Space>
         </Col>
       </Row>
       <Divider orientation="left">Danh sách người dùng</Divider>

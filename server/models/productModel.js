@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const productSchema = mongoose.Schema(
   {
     productID: Number,
-    productTitle: { type: String, text: true },
+    productTitle: String,
     productImage: String,
     productVendor: String,
     productType: String,
@@ -12,7 +12,10 @@ const productSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    timeGuarantee: Number,
+    timeGuarantee: {
+      type: Number,
+      default: 12,
+    },
     clientGuarantee: [
       {
         type: mongoose.Schema.Types.ObjectId,

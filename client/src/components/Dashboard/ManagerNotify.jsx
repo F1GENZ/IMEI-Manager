@@ -1,22 +1,33 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { get_allNotify, resetNotify } from "../../features/notify/notifySlice";
+import { get_allNotify, resetNotify } from "../../features/notifySlice";
 import { toast } from "react-toastify";
 import { Divider, List, Space } from "antd";
 import NotifyItem from "../Notify/NotifyItem";
 import { Content } from "antd/es/layout/layout";
+import { socket } from "../..";
 
 function ManagerNotify() {
   const dispatch = useDispatch();
-  const { notify, isSuccessNotify, isErrorNotify, messageNotify } = useSelector(
-    (state) => state.notify
-  );
+  const { notify } = useSelector((state) => state.notify);
   useEffect(() => {
-    if (isErrorNotify) toast.error(messageNotify);
-    if (isSuccessNotify) toast.info(messageNotify);
-    dispatch(get_allNotify());
+    socket.emit("get-notify");
+
+    socket.on("done-get-notify", (data) => {
+      dispatch(get_allNotify(data));
+    });
+
+    socket.on("done-create-notify", (data) => {
+      toast.info(data);
+      socket.emit("get-notify");
+    });
+
     dispatch(resetNotify());
-  }, [dispatch, isSuccessNotify, isErrorNotify, messageNotify]);
+    return () => {
+      socket.off("done-get-notify");
+      socket.off("done-create-notify");
+    };
+  }, [dispatch]);
 
   const listNotify = notify && notify.data && (
     <List

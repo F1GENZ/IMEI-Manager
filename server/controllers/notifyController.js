@@ -1,68 +1,55 @@
 import Notify from "../models/notifyModel.js";
 import Client from "../models/clientModel.js";
+import { getIO } from "../socket.js";
 
-const getNotify = async (req, res) => {
+const getNotify = async () => {
   try {
-    const response = await Notify.find();
+    const response = await Notify.find().sort({ createdAt: -1 });
     const count = await Notify.find().count();
-    res.status(200).json({ data: response, total: count });
+    return { data: response, total: count };
   } catch (error) {
-    res.status(400).json(error);
+    return error;
   }
 };
 
-const deleteNotify = async (req, res) => {
+const deleteNotify = async (data) => {
   try {
-    const { id } = req.query;
-    if (!id) throw "Missing ID";
-    await Notify.findByIdAndDelete(id);
-    res.status(200).json(`Delete Notify Success`);
+    if (!data) throw "Missing ID";
+    await Notify.findByIdAndDelete(data);
+    return "Xóa thông báo thành công";
   } catch (error) {
-    res.status(200).json(error);
+    return error;
   }
 };
 
-const createNotifyFetch = async (req, res) => {
+const createNotify = async (data) => {
   try {
-    const type = req.body.type;
-    const message = req.body.message;
-    const target = req.body.target;
-    const phone = req.body.phone;
+    const { type, name, phone, order, product, variant } = data;
     if (!type) throw "Missing Type";
-    if (!message) throw "Missing Message";
-    if (!target) throw "Missing Target";
+    if (!name) throw "Missing Name";
     if (!phone) throw "Missing Phone";
-    const notifyExists = await Notify.findOne({ target });
+    if (!order) throw "Missing Order";
+    if (!phone) throw "Missing Phone";
+    const notifyExists = await Notify.findOne({ target: order });
     if (notifyExists) {
       throw "Yêu cầu đang được xử lý";
     } else {
       await Notify.create({
         type,
-        message,
-        target,
+        message: `Bạn có một yêu cầu bảo hành từ khách hàng ${name} có số điện thoại là ${phone} cho đơn hàng ${order}`,
+        target: order,
       });
-      const clientExists = await Client.findOne({ phone });
-      clientExists.countGuarantee = clientExists.countGuarantee + 1;
+      const clientExists = await Client.findOne({
+        phone,
+      }).select({ data: { $elemMatch: { variant: variant } } });
+      clientExists.data[0].countGuarantee =
+        clientExists.data[0].countGuarantee + 1;
       await clientExists.save();
-      res.status(200).json("Yêu cầu đã được gửi thành công");
+      getIO().emit("done-create-notify", "Bạn vừa có 1 thông báo mới");
+      return "Yêu cầu đã được gửi thành công";
     }
   } catch (error) {
-    res.status(400).json(error);
-  }
-};
-
-const createNotify = async (type, message, data) => {
-  try {
-    if (!type) throw "Missing Type";
-    if (!message) throw "Missing Message";
-    if (!data) throw "Missing Data";
-    await Notify.create({
-      type,
-      message,
-      data,
-    });
-  } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
@@ -70,8 +57,6 @@ const apiNotify = {
   getNotify,
   createNotify,
   deleteNotify,
-
-  createNotifyFetch,
 };
 
 export default apiNotify;

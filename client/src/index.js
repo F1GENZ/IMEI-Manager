@@ -5,6 +5,14 @@ import { store } from "./app/store";
 import App from "./App";
 import "./index.scss";
 
+import { io } from "socket.io-client";
+
+export const socket = io("https://imei-manager-zqz6j.ondigitalocean.app");
+socket.emit("authentication", localStorage.getItem("accessToken"));
+socket.on("notAuthor", (data) => {
+  window.location.href = "https://zedition.myharavan.com/";
+});
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

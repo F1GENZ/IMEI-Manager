@@ -17,6 +17,11 @@ import routerClient from "./routes/clientRoute.js";
 import routerFile from "./routes/fileRoute.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 
+import { Server } from "socket.io";
+import { socketActions } from "./socket.js";
+
+import Product from "./models/productModel.js";
+
 const port = process.env.PORT || 8000;
 
 connectDB();
@@ -47,6 +52,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.use(errorHandler);
-app.listen(port, (req, res) => {
+const server = app.listen(port, (req, res) => {
   console.log(`App listening on port ${port}`);
 });
+
+// Socket.io
+socketActions(server);

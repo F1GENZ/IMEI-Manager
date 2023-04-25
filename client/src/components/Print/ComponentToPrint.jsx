@@ -3,8 +3,7 @@ import { forwardRef } from "react";
 import QRCode from "qrcode.react";
 
 const ComponentToPrint = forwardRef((props, ref) => {
-  const buildUrl = `https://lt-ecommerce.myharavan.com/pages/guarantee?proid=${props.proID}&varid=${props.varID}`;
-  // https://lt-ecommerce.myharavan.com/pages/guarantee?proid=1045865207&varid=1101671267
+  const buildUrl = `https://zedition.vn/pages/client?varid=${props.varID}`;
   let domPrint = [];
   for (let i = 0; i < props.count; i++) {
     domPrint.push(
@@ -22,8 +21,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
           includeMargin
           imageSettings={{
             src: "/logoZ.png",
-            width: 20,
-            height: 20,
+            width: 17.5,
+            height: 17.5,
           }}
         />
         <p

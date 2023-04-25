@@ -5,6 +5,7 @@ import Auth from "../models/authModel.js";
 import Product from "../models/productModel.js";
 import apiClient from "../controllers/clientController.js";
 import apiNotify from "../controllers/notifyController.js";
+import { getIO } from "../socket.js";
 
 router.get("/embed/webhooks", (req, res) => {
   var verify_token = req.query["hub.verify_token"] || "";
@@ -46,7 +47,10 @@ router.post("/embed/webhooks", async (req, res) => {
       };
 
       await Product.create(item);
-      console.log("Create product success");
+      getIO().emit(
+        "done-create-products-wh",
+        `Sản phẩm ${item.productTitle} được tạo thành công`
+      );
       break;
     }
     case "products/update": {
@@ -69,13 +73,17 @@ router.post("/embed/webhooks", async (req, res) => {
       };
 
       await Product.findOneAndUpdate({ productID: req.body.id }, item);
-      console.log("Update product success");
+      getIO().emit(
+        "done-update-products-wh",
+        ""
+        // `Cập nhật sản phẩm ${item.productTitle} thành công`
+      );
       break;
     }
     case "products/deleted": {
       res.sendStatus(200);
       await Product.findOneAndRemove({ productID: req.body.id });
-      console.log("Delete product success");
+      getIO().emit("done-delete-products-wh", "Xóa sản phẩm thành công");
       break;
     }
     case "orders/create": {
@@ -95,13 +103,13 @@ router.post("/embed/webhooks", async (req, res) => {
           if (!newClient) throw new Error("Create Client Error");
         }
       }
-      console.log("Auto create client success");
+      getIO().emit("done-create-clients-wh", "Bạn có 1 đơn hàng mới");
       break;
     }
     case "customers/update": {
       res.sendStatus(200);
       await apiClient.updateClientWebhook(req.body);
-      console.log("Update Client From Webhook Success");
+      getIO().emit("done-update-agency-wh", "Cập nhật thành công từ Haravan");
       break;
     }
     default:

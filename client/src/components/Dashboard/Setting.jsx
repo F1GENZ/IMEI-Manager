@@ -1,7 +1,7 @@
 import React from "react";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { Form, Button, Upload, Space } from "antd";
-import fileServices from "../../features/files/fileServices";
+import fileServices from "../../features/fileServices";
 
 function Setting() {
   const exportWithFull = (e) => {

@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import clientSlice from "../features/client/clientSlice";
-import productSlice from "../features/products/productSlice";
-import notifySlice from "../features/notify/notifySlice";
+import clientSlice from "../features/clientSlice";
+import productSlice from "../features/productSlice";
+import notifySlice from "../features/notifySlice";
 
 export const store = configureStore({
   reducer: {

@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import productServices from "./productService";
 
 const initialState = {
   products: null,
@@ -11,26 +10,9 @@ const initialState = {
 
 export const get_allProducts = createAsyncThunk(
   "products/all",
-  async (data, thunkAPI) => {
+  async function (data, thunkAPI) {
     try {
-      return await productServices.call_allProducts(data);
-    } catch (error) {
-      const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const get_singleProduct = createAsyncThunk(
-  "products/single",
-  async (data, thunkAPI) => {
-    try {
-      return await productServices.call_singleProduct(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&
@@ -45,9 +27,9 @@ export const get_singleProduct = createAsyncThunk(
 
 export const update_singleProduct = createAsyncThunk(
   "products/update",
-  async (data, thunkAPI) => {
+  async function (data, thunkAPI) {
     try {
-      return await productServices.update_singleProduct(data);
+      return data;
     } catch (error) {
       const message =
         (error.response &&
@@ -96,7 +78,7 @@ export const productSlice = createSlice({
       .addCase(update_singleProduct.rejected, (state, action) => {
         state.isLoadingProduct = true;
         state.isErrorProduct = true;
-        state.messageProduct = action.payload;
+        state.messageProduct = action;
       });
   },
 });

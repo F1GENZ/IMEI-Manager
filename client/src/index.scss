@@ -174,20 +174,30 @@ html {
   }
 }
 
-.listProduct, .listUser {
+.listProduct,
+.listUser {
   .ant-collapse-header {
     padding: 0 !important;
     h4 {
       margin-top: 0;
     }
   }
-  .ant-collapse-content-box{
+  .ant-collapse-content-box {
     padding: 15px 0 0 !important;
   }
 }
 
-.modalToClient{
-  form{
+.listAgency {
+  .ant-form-item-control-input {
+    text-align: right;
+  }
+  .setActiveAll {
+    margin-right: 10px;
+  }
+}
+
+.modalToClient {
+  form {
     text-align: right;
   }
 }

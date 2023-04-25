@@ -2,23 +2,18 @@ import Product from "../models/productModel.js";
 import Client from "../models/clientModel.js";
 import mongoose from "mongoose";
 
-const getProducts = async (req, res) => {
-  const filter = req.query.filter;
-  const limit = req.query.limit;
-  const paginate = req.query.paginate;
-  let conditional = {};
-  if (filter) {
-    conditional = {
-      $text: {
-        $search: filter,
-      },
-    };
+const getProducts = async (data) => {
+  try {
+    if (!data) throw "Missing Data: Get Products";
+    const { key, limit, paginate } = data;
+    const response = await Product.find({ productTitle: { $regex: key } })
+      .limit(limit)
+      .skip((paginate - 1) * limit);
+    const count = await Product.find({ productTitle: { $regex: key } }).count();
+    return { response, totalPages: count, page: paginate };
+  } catch (error) {
+    return error;
   }
-  const response = await Product.find(conditional)
-    .limit(limit)
-    .skip((paginate - 1) * limit);
-  const count = await Product.find(conditional).count();
-  res.status(200).json({ response, totalPages: count, page: paginate });
 };
 
 const getProduct = async (req, res) => {
@@ -29,18 +24,17 @@ const getProduct = async (req, res) => {
   res.status(200).json({ response });
 };
 
-const updateProduct = async (req, res) => {
+const updateProduct = async (data) => {
   try {
-    const id = req.params.id;
-    const timeGuarantee = req.query.timeGuarantee;
+    const { id, timeGuarantee } = data;
     await Product.findOneAndUpdate(
       { _id: id },
       { timeGuarantee },
       { safe: true, multi: false }
     );
-    res.status(200).json("Cập nhật sản phẩm thành công");
+    return "Cập nhật sản phẩm thành công";
   } catch (error) {
-    res.status(400).json("Cập nhật sản phẩm thất bại");
+    return "Cập nhật sản phẩm thất bại";
   }
 };
 

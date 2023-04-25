@@ -11,7 +11,7 @@ import moment from "moment";
 import ModalToClient from "./ModalToClient";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { delete_singleClients } from "../../features/client/clientSlice";
+import { delete_singleClients } from "../../features/clientSlice";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -50,10 +50,12 @@ function ClientItem({ client }) {
                 <Text strong>Số điện thoại:</Text>
                 {client.phone || "Chưa có thông tin"}
               </Space>
-              <Space>
-                <Text strong>Số lần bảo hành:</Text>
-                {client.countGuarantee}
-              </Space>
+              {client.agencyName && (
+                <Space>
+                  <Text strong>Từ đại lý:</Text>
+                  {client.agencyName || "Chưa có thông tin"}
+                </Space>
+              )}
               {(!client.name || !client.phone) && (
                 <Button
                   danger
@@ -81,7 +83,8 @@ function ClientItem({ client }) {
                   >
                     Sản phẩm {item.variant} - Đơn hàng {item.order} - Số lượng{" "}
                     {item.quantity} - Bảo hành tới{" "}
-                    {moment(item.timeEnd).format("DD/MM/YYYY")}
+                    {moment(item.timeEnd).format("DD/MM/YYYY")} - Số lần bảo
+                    hành {item.countGuarantee}
                   </a>
                 </Popover>
                 <Popconfirm

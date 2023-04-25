@@ -41,6 +41,7 @@ function AgencyItem({ client }) {
   const newData =
     client &&
     client.data &&
+    client.data.length > 0 &&
     client.data.reduce((result, current, curIndex) => {
       if (curIndex === 0) result = [];
       const filterTask = result.filter((el) => {
@@ -50,9 +51,10 @@ function AgencyItem({ client }) {
         filterTask.list.push(current);
       } else {
         result.push({
-          _id: current._id,
+          _id: client._id,
+          name: client.name,
           variant: current.variant,
-          product: current.products.productID,
+          product: current.products ? current.products.productID : null,
           order: current.order,
           list: [current],
         });
@@ -70,9 +72,7 @@ function AgencyItem({ client }) {
       <Collapse ghost size="small" expandIconPosition="end" collapsible="icon">
         <Panel header={headerPanel}>
           {newData &&
-            newData.map((item, key) => (
-              <AgencyOrder data={item} />
-            ))}
+            newData.map((item, key) => <AgencyOrder key={key} data={item} />)}
         </Panel>
       </Collapse>
     </List.Item>

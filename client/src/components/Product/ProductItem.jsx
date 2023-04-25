@@ -10,8 +10,9 @@ import {
 } from "antd";
 import { SaveOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import { update_singleProduct } from "../../features/products/productSlice";
+import { update_singleProduct } from "../../features/productSlice";
 import VariantItem from "./VariantItem";
+import { socket } from "../..";
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -21,7 +22,11 @@ function ProductItem({ dispatch, product }) {
   const [disabled, setDisabled] = useState(true);
   const updateProducts = (value) => {
     if (Number(value.timeGuarantee) !== Number(product.timeGuarantee)) {
-      dispatch(update_singleProduct(value));
+      socket.emit("update-product", value);
+      socket.on("done-update-product", (data) => {
+        dispatch(update_singleProduct(data));
+        socket.off("done-update-product");
+      });
     }
     setDisabled(true);
   };
@@ -59,6 +64,7 @@ function ProductItem({ dispatch, product }) {
                         </Form.Item>
                         <Form.Item noStyle={true} name="timeGuarantee">
                           <Input
+                            autoComplete="off"
                             style={{ width: "50px" }}
                             size="small"
                             disabled={disabled}

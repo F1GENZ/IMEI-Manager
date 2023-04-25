@@ -3,7 +3,7 @@ import { useRef } from "react";
 import ReactToPrint from "react-to-print";
 import ComponentToPrint from "./ComponentToPrint";
 import { PrinterOutlined } from "@ant-design/icons";
-import { Space, Button } from "antd";
+import { Button } from "antd";
 
 function ToPrint({ dataPrint }) {
   const componentRef = useRef();

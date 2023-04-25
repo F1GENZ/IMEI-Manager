@@ -3,64 +3,123 @@ import {
   DatabaseOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
-import { Descriptions, Space, Button } from "antd";
+import { Descriptions, Space, Form, Checkbox, Button, Typography } from "antd";
 import ReactToPrint from "react-to-print";
 import AgencyToPrints from "./AgencyToPrints";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { active_allAgency } from "../../features/client/clientSlice";
+import { active_allAgency } from "../../features/clientSlice";
+import { socket } from "../..";
+import { Content } from "antd/es/layout/layout";
 
 function AgencyOrder({ data }) {
+  const [startActive, setStartActive] = useState({
+    state: false,
+    text: "Kích hoạt tất cả",
+  });
   const componentRef = useRef();
   const dispatch = useDispatch();
-  const onActiveAll = () => {
-    dispatch(active_allAgency(data));
+
+  const onActive = (value) => {
+    let listValue = Object.values(value);
+    let newData = {
+      ...data,
+      list: data.list.filter((element, key) => {
+        return listValue[key] === true;
+      }),
+    };
+    socket.emit("active-agency", newData);
+    socket.on("done-active-agency", (data) => {
+      dispatch(active_allAgency(data));
+      socket.off("done-active-agency");
+    });
+    setStartActive({
+      state: false,
+      text: "Kích hoạt tất cả",
+    });
   };
+
   return (
-    <Descriptions
-      size="small"
-      title={
-        <Space>
-          <DatabaseOutlined size="small" />
-          Đơn hàng số {data.order}
+    <Form onFinish={(value) => onActive(value)}>
+      <Space className="d-flex" direction="vertical">
+        <Space className="d-flex" style={{ justifyContent: "space-between" }}>
+          <Space>
+            <DatabaseOutlined size="small" />
+            <Typography.Text strong>Đơn hàng số {data.order}</Typography.Text>
+          </Space>
+          <Content>
+            <Button
+              className="setActiveAll"
+              size="small"
+              danger
+              icon={<AlertOutlined />}
+              onClick={() =>
+                setStartActive({
+                  state: true,
+                  text: "Chờ kích hoạt...",
+                })
+              }
+            >
+              {startActive.text}
+            </Button>
+            <ReactToPrint
+              trigger={() => (
+                <Button size="small" type="primary" icon={<PrinterOutlined />}>
+                  In tất cả
+                </Button>
+              )}
+              content={() => componentRef.current}
+            />
+            <div hidden>
+              <AgencyToPrints ref={componentRef} data={data} />
+            </div>
+          </Content>
         </Space>
-      }
-      extra={
-        <Space>
-          <Button
-            size="small"
-            danger
-            icon={<AlertOutlined />}
-            onClick={() => onActiveAll()}
-          >
-            Kích hoạt tất cả
-          </Button>
-          <ReactToPrint
-            trigger={() => (
-              <Button size="small" type="primary" icon={<PrinterOutlined />}>
-                In tất cả
-              </Button>
-            )}
-            content={() => componentRef.current}
-          />
-          <div hidden>
-            <AgencyToPrints ref={componentRef} data={data} />
-          </div>
+        <Space className="d-flex" direction="vertical" size={0}>
+          {data &&
+            data.list &&
+            data.list.length > 0 &&
+            data.list.map((element, key) => (
+              <Form.Item
+                style={{ marginBottom: "0" }}
+                label={`${key + 1}. ${element.products.productTitle} (${
+                  element.variant
+                })`}
+                name={`isCheck${key}`}
+                valuePropName="checked"
+                initialValue={true}
+              >
+                {startActive.state && (
+                  <Checkbox defaultChecked={true}></Checkbox>
+                )}
+              </Form.Item>
+            ))}
         </Space>
-      }
-    >
-      {data.list.map((element, key) => (
-        <Descriptions.Item key={key} label={key + 1} span={3}>
-          <a
-            rel="noreferrer"
-            target="_blank"
-            href={`https://zedition.myharavan.com/admin/orders/${element.order}`}
-          >
-            {element.products.productTitle} {element.variant}
-          </a>
-        </Descriptions.Item>
-      ))}
-    </Descriptions>
+        {startActive.state && (
+          <Space className="d-flex" style={{ justifyContent: "end" }}>
+            <Button
+              style={{ marginBottom: "15px" }}
+              danger
+              onClick={() =>
+                setStartActive({
+                  state: false,
+                  text: "Kích hoạt tất cả",
+                })
+              }
+            >
+              Hủy
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginBottom: "15px" }}
+            >
+              Xác nhận
+            </Button>
+          </Space>
+        )}
+      </Space>
+    </Form>
   );
 }
 
