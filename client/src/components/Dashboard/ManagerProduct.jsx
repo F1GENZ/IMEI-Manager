@@ -32,7 +32,7 @@ function Manager_Product() {
     });
 
     socket.on("done-update-products-wh", (data) => {
-      toast.info(data);
+      //toast.info(data);
       socket.emit("get-products", dataFilter);
     });
 
