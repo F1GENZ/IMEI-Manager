@@ -4,7 +4,6 @@ const router = expess.Router();
 import Auth from "../models/authModel.js";
 import Product from "../models/productModel.js";
 import apiClient from "../controllers/clientController.js";
-import apiNotify from "../controllers/notifyController.js";
 import { getIO } from "../socket.js";
 
 router.get("/embed/webhooks", (req, res) => {
@@ -72,12 +71,11 @@ router.post("/embed/webhooks", async (req, res) => {
         }),
       };
 
-      await Product.findOneAndUpdate({ productID: req.body.id }, item);
-      getIO().emit(
-        "done-update-products-wh",
-        ""
-        // `Cập nhật sản phẩm ${item.productTitle} thành công`
-      );
+      await Product.findOneAndUpdate({ productID: req.body.id }, item, {
+        safe: true,
+        multi: false,
+      });
+      getIO().emit("done-update-products-wh", "");
       break;
     }
     case "products/deleted": {

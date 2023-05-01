@@ -4,6 +4,7 @@ import QRCode from "qrcode.react";
 
 const ComponentToPrint = forwardRef((props, ref) => {
   const buildUrl = `https://zedition.vn/pages/client?varid=${props.varID}`;
+  // https://zedition.vn/pages/client?varid=1101671292
   let domPrint = [];
   for (let i = 0; i < props.count; i++) {
     domPrint.push(
