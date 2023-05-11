@@ -17,10 +17,7 @@ import routerClient from "./routes/clientRoute.js";
 import routerFile from "./routes/fileRoute.js";
 import errorHandler from "./middlewares/errorMiddleware.js";
 
-import { Server } from "socket.io";
 import { socketActions } from "./socket.js";
-
-import Product from "./models/productModel.js";
 
 const port = process.env.PORT || 8000;
 

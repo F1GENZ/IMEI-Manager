@@ -7,6 +7,7 @@ const AgencyToPrints = forwardRef((props, ref) => {
   let domPrint = [];
   for (let i = 0; i < data.list.length; i++) {
     const buildUrl = `https://zedition.vn/pages/agency?objid=${data.list[i]._id}&varid=${data.list[i].variant}`;
+    // https://zedition.vn/pages/agency?objid=644faac575e7117632046c84&varid=1095774211
     domPrint.push(
       <Col
         key={i}
@@ -22,8 +23,8 @@ const AgencyToPrints = forwardRef((props, ref) => {
           includeMargin
           imageSettings={{
             src: "/logoZ.png",
-            width: 20,
-            height: 20,
+            width: 15,
+            height: 15,
           }}
         />
         <span style={{ position: 'absolute', right: '5px', 'bottom': '5px', fontSize: '7px', lineHeight: 1 }}>{ i + 1 }</span>

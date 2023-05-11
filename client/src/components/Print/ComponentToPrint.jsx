@@ -22,8 +22,8 @@ const ComponentToPrint = forwardRef((props, ref) => {
           includeMargin
           imageSettings={{
             src: "/logoZ.png",
-            width: 17.5,
-            height: 17.5,
+            width: 15,
+            height: 15,
           }}
         />
         <p
