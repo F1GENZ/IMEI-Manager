@@ -59,6 +59,23 @@ export const delete_singleClients = createAsyncThunk(
   }
 );
 
+export const delete_masterClients = createAsyncThunk(
+  "clients/delete-master",
+  async (data, thunkAPI) => {
+    try {
+      return data;
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const active_allAgency = createAsyncThunk(
   "clients/activess",
   async (data, thunkAPI) => {
@@ -111,6 +128,17 @@ export const clientSlice = createSlice({
         state.messageClient = action.payload;
       })
       .addCase(delete_singleClients.rejected, (state, action) => {
+        state.isLoadingClient = true;
+        state.messageClient = action.payload;
+      }).addCase(delete_masterClients.pending, (state) => {
+        state.isLoadingClient = true;
+      })
+      .addCase(delete_masterClients.fulfilled, (state, action) => {
+        state.isLoadingClient = false;
+        state.isSuccessClient = true;
+        state.messageClient = action.payload;
+      })
+      .addCase(delete_masterClients.rejected, (state, action) => {
         state.isLoadingClient = true;
         state.messageClient = action.payload;
       })

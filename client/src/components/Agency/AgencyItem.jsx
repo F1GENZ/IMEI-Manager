@@ -1,4 +1,4 @@
-import { List, Collapse, Space, Typography, Button } from "antd";
+import { List, Collapse, Space, Typography, Button, Row, Col } from "antd";
 import { useState } from "react";
 import ModalToClient from "../Client/ModalToClient";
 import AgencyOrder from "./AgencyOrder";
@@ -17,25 +17,31 @@ function AgencyItem({ client }) {
   /* End Modal */
 
   const headerPanel = (
-    <Space size={30}>
-      <Space>
-        <Text strong>Họ và tên:</Text>
-        {client.name || "Khách hàng vãng lai"}
-      </Space>
-      <Space>
-        <Text strong>Số điện thoại:</Text>
-        {client.phone || "Chưa có thông tin"}
-      </Space>
-      {(!client.name || !client.phone) && (
-        <Button
-          danger
-          size="small"
-          onClick={() => onUpdateUser(client._id, client.name, client.phone)}
-        >
-          Cập nhật
-        </Button>
-      )}
-    </Space>
+    <Row gutter={30}>
+      <Col span={6}>
+        <Space>
+          <Text strong>Họ và tên:</Text>
+          {client.name || "Khách hàng vãng lai"}
+        </Space>
+      </Col>
+      <Col span={6}>
+        <Space>
+          <Text strong>Số điện thoại:</Text>
+          {client.phone || "Chưa có thông tin"}
+        </Space>
+      </Col>
+      <Col span={6}>
+        {(!client.name || !client.phone) && (
+          <Button
+            danger
+            size="small"
+            onClick={() => onUpdateUser(client._id, client.name, client.phone)}
+          >
+            Cập nhật
+          </Button>
+        )}
+      </Col>
+    </Row>
   );
 
   const newData =

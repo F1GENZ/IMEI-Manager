@@ -4,14 +4,16 @@ import {
   Space,
   Typography,
   Button,
-  Popover,
+  Row,
+  Col,
   Popconfirm,
 } from "antd";
-import moment from "moment";
 import ModalToClient from "./ModalToClient";
 import { useState } from "react";
+import ClientOrder from "./ClientOrder";
+import { socket } from "../..";
 import { useDispatch } from "react-redux";
-import { delete_singleClients } from "../../features/clientSlice";
+import { delete_masterClients } from "../../features/clientSlice";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -25,11 +27,88 @@ function ClientItem({ client }) {
     setDataClient({ id, name, phone });
     setIsModalOpen(true);
   };
-
-  const onDeleteClient = async (parent, child) => {
-    dispatch(delete_singleClients({ parent, child }));
-  };
   /* End Modal */
+
+  const headerPanel = (
+    <Row gutter={30}>
+      <Col span={6}>
+        <Space>
+          <Text strong>Họ và tên:</Text>
+          {client.name || "Khách hàng vãng lai"}
+        </Space>
+      </Col>
+      <Col span={6}>
+        <Space>
+          <Text strong>Số điện thoại:</Text>
+          {client.phone || "Chưa có thông tin"}
+        </Space>
+      </Col>
+      <Col span={6}>
+        {client.agencyName && (
+          <Space>
+            <Text strong>Từ đại lý:</Text>
+            {client.agencyName || "Chưa có thông tin"}
+          </Space>
+        )}
+      </Col>
+      <Col span={6}>
+        <Space className="d-flex" direction="horizontal">
+          <Popconfirm
+            placement="left"
+            title="Bạn có chắc muốn xóa khách hàng này?"
+            onConfirm={(e) => {
+              socket.emit("delete-master-client", client._id);
+              socket.on("done-delete-master-client", (data) => {
+                dispatch(delete_masterClients(data));
+                socket.off("done-delete-master-client");
+              });
+            }}
+            okText="Xác nhận"
+            cancelText="Bỏ qua"
+          >
+            <Button danger size="small">
+              Xóa.!
+            </Button>
+          </Popconfirm>
+          {(!client.name || !client.phone) && (
+            <Button
+              size="small"
+              onClick={() =>
+                onUpdateUser(client._id, client.name, client.phone)
+              }
+            >
+              Cập nhật
+            </Button>
+          )}
+        </Space>
+      </Col>
+    </Row>
+  );
+
+  const newData =
+    client &&
+    client.data &&
+    client.data.length > 0 &&
+    client.data.reduce((result, current, curIndex) => {
+      if (curIndex === 0) result = [];
+      const filterTask = result.filter((el) => {
+        return el.order === current.order;
+      })[0];
+      if (filterTask) {
+        filterTask.list.push(current);
+      } else {
+        result.push({
+          _id: client._id,
+          name: client.name,
+          variant: current.variant,
+          product: current.products ? current.products.productID : null,
+          order: current.order,
+          list: [current],
+        });
+      }
+      return result;
+    }, []);
+
   return (
     <List.Item>
       <ModalToClient
@@ -39,68 +118,9 @@ function ClientItem({ client }) {
         setIsModalOpen={setIsModalOpen}
       />
       <Collapse ghost size="small" expandIconPosition="end" collapsible="icon">
-        <Panel
-          header={
-            <Space size={30}>
-              <Space>
-                <Text strong>Họ và tên:</Text>
-                {client.name || "Khách hàng vãng lai"}
-              </Space>
-              <Space>
-                <Text strong>Số điện thoại:</Text>
-                {client.phone || "Chưa có thông tin"}
-              </Space>
-              {client.agencyName && (
-                <Space>
-                  <Text strong>Từ đại lý:</Text>
-                  {client.agencyName || "Chưa có thông tin"}
-                </Space>
-              )}
-              {(!client.name || !client.phone) && (
-                <Button
-                  danger
-                  size="small"
-                  onClick={() =>
-                    onUpdateUser(client._id, client.name, client.phone)
-                  }
-                >
-                  Cập nhật
-                </Button>
-              )}
-            </Space>
-          }
-        >
-          <List
-            direction="vertical"
-            dataSource={client.data}
-            renderItem={(item) => (
-              <List.Item>
-                <Popover content={item.products.productTitle} trigger="hover">
-                  <a
-                    rel="noreferrer"
-                    target="_blank"
-                    href={`https://zedition.myharavan.com/admin/orders/${item.order}`}
-                  >
-                    Sản phẩm {item.variant} - Đơn hàng {item.order} - Số lượng{" "}
-                    {item.quantity} - Bảo hành tới{" "}
-                    {moment(item.timeEnd).format("DD/MM/YYYY")} - Số lần bảo
-                    hành {item.countGuarantee}
-                  </a>
-                </Popover>
-                <Popconfirm
-                  placement="left"
-                  title="Bạn có chắc muốn hủy mã bảo hành này?"
-                  onConfirm={(e) => onDeleteClient(client._id, item._id)}
-                  okText="Tiếp tục"
-                  cancelText="Bỏ qua"
-                >
-                  <Button type="text" danger>
-                    Hủy
-                  </Button>
-                </Popconfirm>
-              </List.Item>
-            )}
-          />
+        <Panel header={headerPanel}>
+          {newData &&
+            newData.map((item, key) => <ClientOrder key={key} data={item} />)}
         </Panel>
       </Collapse>
     </List.Item>

@@ -247,21 +247,32 @@ const autoCreateClientYP = async (data) => {
   }
 };
 
-const deleteClient = async (req, res) => {
+const deleteClient = async (data) => {
   try {
-    const parent = req.body.params.parent;
-    const child = req.body.params.child;
-    if (!parent) throw new Error("Missing Parent ID");
-    if (!child) throw new Error("Missing Child ID");
-    const clientExists = await Client.findById(parent);
-    if (!clientExists) throw new Error("Client Not Found");
-    clientExists.data.pull({ _id: mongoose.Types.ObjectId(child) });
-    await clientExists.save();
-    res.status(200).json("Delete Success");
+    await Promise.map(
+      data.list,
+      async (item) => {
+        const clientExists = await Client.findById(data._id);
+        if (!clientExists) throw new Error("Client Not Found");
+        clientExists.data.pull({ _id: mongoose.Types.ObjectId(item._id) });
+        await clientExists.save();
+      },
+      { concurrency: 1 }
+    );
+    return "Hủy bảo hành thành công";
   } catch (error) {
-    res.status(400).json(error);
+    return error;
   }
 };
+
+const deleteMasterClient = async (data) => {
+  try {
+    await Client.findByIdAndDelete(data);
+    return "Xóa khách hàng thành công";
+  } catch (error) {
+    return error;
+  }
+}
 
 const flagClient = async (data) => {
   try {
@@ -332,6 +343,7 @@ const apiClient = {
   autoCreateClientNP,
   updateClient,
   deleteClient,
+  deleteMasterClient,
   flagClient,
   activeAgency,
   // For Webhook

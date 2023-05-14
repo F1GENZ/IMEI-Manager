@@ -42,6 +42,16 @@ export function socketActions(server) {
       socket.emit("done-update-single-client", response);
     });
 
+    socket.on("delete-client", async (data) => {
+      const response = await apiClient.deleteClient(data);
+      socket.emit("done-delete-client", response);
+    });
+
+    socket.on("delete-master-client", async (data) => {
+      const response = await apiClient.deleteMasterClient(data);
+      socket.emit("done-delete-master-client", response);
+    });
+
     // For Agency
     socket.on("active-agency", async (data) => {
       const response = await apiClient.activeAgency(data);

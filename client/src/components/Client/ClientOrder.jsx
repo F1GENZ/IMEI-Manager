@@ -3,19 +3,19 @@ import {
   DatabaseOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
-import { Descriptions, Space, Form, Checkbox, Button, Typography } from "antd";
+import { Space, Form, Checkbox, Button, Typography } from "antd";
 import ReactToPrint from "react-to-print";
-import AgencyToPrints from "./AgencyToPrints";
+import ClientToPrints from "./ClientToPrints";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { active_allAgency } from "../../features/clientSlice";
+import { delete_singleClients } from "../../features/clientSlice";
 import { socket } from "../..";
 import { Content } from "antd/es/layout/layout";
 
-function AgencyOrder({ data }) {
+function ClientOrder({ data }) {
   const [startActive, setStartActive] = useState({
     state: false,
-    text: "Kích hoạt tất cả",
+    text: "Hủy bảo hành",
   });
   const componentRef = useRef();
   const dispatch = useDispatch();
@@ -28,14 +28,14 @@ function AgencyOrder({ data }) {
         return listValue[key] === true;
       }),
     };
-    socket.emit("active-agency", newData);
-    socket.on("done-active-agency", (data) => {
-      dispatch(active_allAgency(data));
-      socket.off("done-active-agency");
+    socket.emit("delete-client", newData);
+    socket.on("done-delete-client", (data) => {
+      dispatch(delete_singleClients(data));
+      socket.off("done-delete-client");
     });
     setStartActive({
       state: false,
-      text: "Kích hoạt tất cả",
+      text: "Hủy bảo hành",
     });
   };
 
@@ -64,7 +64,7 @@ function AgencyOrder({ data }) {
               onClick={() =>
                 setStartActive({
                   state: true,
-                  text: "Chờ kích hoạt...",
+                  text: "Chờ xác nhận...",
                 })
               }
             >
@@ -79,7 +79,7 @@ function AgencyOrder({ data }) {
               content={() => componentRef.current}
             />
             <div hidden>
-              <AgencyToPrints ref={componentRef} data={data} />
+              <ClientToPrints ref={componentRef} data={data} />
             </div>
           </Content>
         </Space>
@@ -92,7 +92,7 @@ function AgencyOrder({ data }) {
                 style={{ marginBottom: "0" }}
                 label={`${key + 1}. ${element.products.productTitle} (${
                   element.variant
-                })`}
+                }) - Số lượng ${element.quantity}`}
                 name={`isCheck${key}`}
                 valuePropName="checked"
                 initialValue={true}
@@ -131,4 +131,4 @@ function AgencyOrder({ data }) {
   );
 }
 
-export default AgencyOrder;
+export default ClientOrder;
