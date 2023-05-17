@@ -4,6 +4,7 @@ import QRCode from "qrcode.react";
 
 const ClientToPrints = forwardRef((props, ref) => {
   let { data } = props;
+  console.log(data);
   let domPrint = [];
   for (let i = 0; i < data.list.length; i++) {
     for (let j = 0; j < +data.list[i].quantity; j++) {
@@ -32,17 +33,6 @@ const ClientToPrints = forwardRef((props, ref) => {
               height: 15,
             }}
           />
-          <span
-            style={{
-              position: "absolute",
-              right: "5px",
-              bottom: "5px",
-              fontSize: "7px",
-              lineHeight: 1,
-            }}
-          >
-            {i + 1}
-          </span>
           <p
             style={{
               width: "45px",

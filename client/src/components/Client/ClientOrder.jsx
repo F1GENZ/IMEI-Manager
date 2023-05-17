@@ -4,9 +4,9 @@ import {
   PrinterOutlined,
 } from "@ant-design/icons";
 import { Space, Form, Checkbox, Button, Typography } from "antd";
-import ReactToPrint from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import ClientToPrints from "./ClientToPrints";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { delete_singleClients } from "../../features/clientSlice";
 import { socket } from "../..";
@@ -17,30 +17,67 @@ function ClientOrder({ data }) {
     state: false,
     text: "Hủy bảo hành",
   });
-  const componentRef = useRef();
+  const [startPrint, setStartPrint] = useState({
+    state: false,
+    text: "Quản lý in",
+  });
+  const componentRef = useRef(null);
+  const [componentPrint, setComponentPrint] = useState(
+    <ClientToPrints ref={componentRef} data={data} />
+  );
   const dispatch = useDispatch();
 
   const onActive = (value) => {
-    let listValue = Object.values(value);
+    if (startActive.state) {
+      let listValue = Object.values(value);
+      let newData = {
+        ...data,
+        list: data.list.filter((element, key) => {
+          return listValue[key] === true;
+        }),
+      };
+      socket.emit("delete-client", newData);
+      socket.on("done-delete-client", (data) => {
+        dispatch(delete_singleClients(data));
+        socket.off("done-delete-client");
+      });
+      setStartActive({
+        state: false,
+        text: "Hủy bảo hành",
+      });
+    } else if (startPrint.state) {
+      let listValue = Object.values(value);
+      let newData = {
+        ...data,
+        list: data.list.filter((element, key) => {
+          return listValue[key] === true;
+        }),
+      };
+      setComponentPrint(<ClientToPrints ref={componentRef} data={newData} />);
+      handlePrint();
+    }
+  };
+
+  const onSetValue = (value, allValue) => {
+    let listValue = Object.values(allValue);
     let newData = {
       ...data,
       list: data.list.filter((element, key) => {
         return listValue[key] === true;
       }),
     };
-    socket.emit("delete-client", newData);
-    socket.on("done-delete-client", (data) => {
-      dispatch(delete_singleClients(data));
-      socket.off("done-delete-client");
-    });
-    setStartActive({
-      state: false,
-      text: "Hủy bảo hành",
-    });
+    setComponentPrint(<ClientToPrints ref={componentRef} data={newData} />);
   };
 
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
-    <Form onFinish={(value) => onActive(value)}>
+    <Form
+      onFinish={(value) => onActive(value)}
+      onValuesChange={(value, allValue) => onSetValue(value, allValue)}
+    >
       <Space className="d-flex" direction="vertical">
         <Space className="d-flex" style={{ justifyContent: "space-between" }}>
           <Space>
@@ -56,31 +93,39 @@ function ClientOrder({ data }) {
             </Typography.Text>
           </Space>
           <Content>
-            <Button
-              className="setActiveAll"
-              size="small"
-              danger
-              icon={<AlertOutlined />}
-              onClick={() =>
-                setStartActive({
-                  state: true,
-                  text: "Chờ xác nhận...",
-                })
-              }
-            >
-              {startActive.text}
-            </Button>
-            <ReactToPrint
-              trigger={() => (
-                <Button size="small" type="primary" icon={<PrinterOutlined />}>
-                  In tất cả
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-            <div hidden>
-              <ClientToPrints ref={componentRef} data={data} />
-            </div>
+            {!startPrint.state && (
+              <Button
+                className="setActiveAll"
+                size="small"
+                danger
+                icon={<AlertOutlined />}
+                onClick={() =>
+                  setStartActive({
+                    state: true,
+                    text: "Chờ xác nhận...",
+                  })
+                }
+              >
+                {startActive.text}
+              </Button>
+            )}
+            {!startActive.state && (
+              <Button
+                className="setActiveAll"
+                size="small"
+                danger
+                icon={<AlertOutlined />}
+                onClick={() =>
+                  setStartPrint({
+                    state: true,
+                    text: "Chờ xác nhận...",
+                  })
+                }
+              >
+                {startPrint.text}
+              </Button>
+            )}
+            <div hidden>{componentPrint}</div>
           </Content>
         </Space>
         <Space className="d-flex" direction="vertical" size={0}>
@@ -97,23 +142,29 @@ function ClientOrder({ data }) {
                 valuePropName="checked"
                 initialValue={true}
               >
-                {startActive.state && (
+                {(startActive.state || startPrint.state) && (
                   <Checkbox defaultChecked={true}></Checkbox>
                 )}
               </Form.Item>
             ))}
         </Space>
-        {startActive.state && (
+        {(startActive.state || startPrint.state) && (
           <Space className="d-flex" style={{ justifyContent: "end" }}>
             <Button
               style={{ marginBottom: "15px" }}
-              danger
-              onClick={() =>
-                setStartActive({
-                  state: false,
-                  text: "Kích hoạt tất cả",
-                })
-              }
+              onClick={() => {
+                if (startActive.state) {
+                  setStartActive({
+                    state: false,
+                    text: "Hủy bảo hành",
+                  });
+                } else if (startPrint.state) {
+                  setStartPrint({
+                    state: false,
+                    text: "Quản lý in",
+                  });
+                }
+              }}
             >
               Hủy
             </Button>

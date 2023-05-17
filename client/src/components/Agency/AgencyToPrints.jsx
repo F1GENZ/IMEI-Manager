@@ -7,13 +7,16 @@ const AgencyToPrints = forwardRef((props, ref) => {
   let domPrint = [];
   for (let i = 0; i < data.list.length; i++) {
     const buildUrl = `https://zedition.vn/pages/agency?objid=${data.list[i]._id}&varid=${data.list[i].variant}`;
-    // https://zedition.vn/pages/agency?objid=644faac575e7117632046c84&varid=1095774211
     domPrint.push(
       <Col
         key={i}
         span={8}
         className="d-flex"
-        style={{ padding: "0 5px 0 10px", alignItems: "center", position: 'relative' }}
+        style={{
+          padding: "0 5px 0 10px",
+          alignItems: "center",
+          position: "relative",
+        }}
       >
         <QRCode
           renderAs="svg"
@@ -27,7 +30,17 @@ const AgencyToPrints = forwardRef((props, ref) => {
             height: 15,
           }}
         />
-        <span style={{ position: 'absolute', right: '5px', 'bottom': '5px', fontSize: '7px', lineHeight: 1 }}>{ i + 1 }</span>
+        <span
+          style={{
+            position: "absolute",
+            right: "5px",
+            bottom: "5px",
+            fontSize: "7px",
+            lineHeight: 1,
+          }}
+        >
+          {i + 1}
+        </span>
         <p
           style={{
             width: "45px",
