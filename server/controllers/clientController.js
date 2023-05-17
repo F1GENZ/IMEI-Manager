@@ -48,7 +48,9 @@ const createClient = async (data) => {
     flagClientExists.data.pull({ _id: flagid });
     await flagClientExists.save();
 
-    return clientExists;
+    const clientReturn = await Client.findOne({ phone });
+
+    return clientReturn;
   } catch (error) {
     return error;
   }

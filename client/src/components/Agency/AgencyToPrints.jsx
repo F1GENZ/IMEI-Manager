@@ -7,6 +7,7 @@ const AgencyToPrints = forwardRef((props, ref) => {
   let domPrint = [];
   for (let i = 0; i < data.list.length; i++) {
     const buildUrl = `https://zedition.vn/pages/agency?objid=${data.list[i]._id}&varid=${data.list[i].variant}`;
+    console.log(buildUrl);
     domPrint.push(
       <Col
         key={i}
